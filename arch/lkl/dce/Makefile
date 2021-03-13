@@ -1,0 +1,1 @@
+obj-y = dce_socket.o dce_device.o sysctl.o

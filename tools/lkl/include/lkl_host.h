@@ -19,13 +19,15 @@ int lkl_printf(const char *fmt, ...);
 
 extern char lkl_virtio_devs[4096];
 
-#ifdef LKL_HOST_CONFIG_POSIX
+#ifdef LKL_HOST_CONFIG_DCE
 #include <sys/uio.h>
 #else
+#if 0
 struct iovec {
 	void *iov_base;
 	size_t iov_len;
 };
+#endif
 #endif
 
 extern struct lkl_dev_blk_ops lkl_dev_blk_ops;

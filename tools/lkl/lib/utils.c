@@ -209,6 +209,7 @@ void lkl_bug(const char *fmt, ...)
 
 int lkl_sysctl(const char *path, const char *value)
 {
+	fprintf(stderr,"lkl_sysctl called\n");
 	int ret;
 	int fd;
 	char *delim, *p;
@@ -229,6 +230,7 @@ int lkl_sysctl(const char *path, const char *value)
 			   full_path, lkl_strerror(fd));
 		return -1;
 	}
+	fprintf(stderr,"lkl_sys_write to be called\n");
 	ret = lkl_sys_write(fd, value, strlen(value));
 	if (ret < 0) {
 		lkl_printf("lkl_sys_write %s: %s\n",
@@ -238,6 +240,44 @@ int lkl_sysctl(const char *path, const char *value)
 	lkl_sys_close(fd);
 
 	return 0;
+}
+
+int lkl_sysctl_get(const char *path, char *buffer, int size)
+{
+  int ret;
+  int fd;
+  char *delim, *p;
+  char full_path[256];
+  lkl_mount_fs("proc");
+
+  snprintf(full_path, sizeof(full_path), "/proc/sys/%s", path);
+  p = full_path;
+  while ((delim = strstr(p, "."))) {
+    *delim = '/';
+    p = delim + 1;
+  }
+
+  fprintf(stderr,"lkl_sys_open calling\n");
+  fd = lkl_sys_open(full_path, LKL_O_RDONLY , 0);
+  fprintf(stderr,lkl_strerror(fd));
+  if (fd < 0) {	  
+    lkl_printf("lkl_sys_open %s: %s\n",
+         full_path, lkl_strerror(fd));
+    return -1;
+  }
+
+  //TODO: need to verify significance of size
+  fprintf(stderr,"lkl_sys_read calling\n");
+  ret = lkl_sys_read(fd, buffer, size);
+  fprintf(stderr,"lkl_sys_read done\n");
+  if (ret < 0) {
+    lkl_printf("lkl_sys_write %s: %s\n",
+      full_path, lkl_strerror(fd));
+  }
+
+  lkl_sys_close(fd);
+
+  return ret;
 }
 
 /* Configure sysctl parameters as the form of "key=value;key=value;..." */

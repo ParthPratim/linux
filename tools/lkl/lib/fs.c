@@ -9,14 +9,17 @@
 #define MAX_FSTYPE_LEN 50
 int lkl_mount_fs(char *fstype)
 {
+	fprintf(stderr,"Trying to Mount FS\n");
 	char dir[MAX_FSTYPE_LEN+2] = "/";
 	int flags = 0, ret = 0;
 
 	strncat(dir, fstype, MAX_FSTYPE_LEN);
 
 	/* Create with regular umask */
+	fprintf(stderr,"trying to do mkdir\n");
 	ret = lkl_sys_mkdir(dir, 0xff);
-	if (ret && ret != -LKL_EEXIST) {
+	fprintf(stderr,"done mkdir\n");
+	if (ret && ret != -LKL_EEXIST) {		
 		lkl_perror("mount_fs mkdir", ret);
 		return ret;
 	}
@@ -24,6 +27,7 @@ int lkl_mount_fs(char *fstype)
 	/* We have no use for nonzero flags right now */
 	ret = lkl_sys_mount("none", dir, fstype, flags, NULL);
 	if (ret && ret != -LKL_EBUSY) {
+		fprintf(stderr,"error in lkl_sys_mount\n");
 		lkl_sys_rmdir(dir);
 		return ret;
 	}

@@ -30,12 +30,15 @@ extern "C" {
 
 #if defined(__MINGW32__)
 #define strtok_r strtok_s
-#define inet_pton lkl_inet_pton
+#endif
 
-int inet_pton(int af, const char *src, void *dst);
+#if defined(__ANDROID__) && __LKL__BITS_PER_LONG == 32
+#define __lkl__NR_fcntl __lkl__NR_fcntl64
 #endif
 
 #if __LKL__BITS_PER_LONG == 64
+#define lkl_sys_stat lkl_sys_newstat
+#define lkl_sys_lstat lkl_sys_newlstat
 #define lkl_sys_fstatat lkl_sys_newfstatat
 #define lkl_sys_fstat lkl_sys_newfstat
 
@@ -943,6 +946,13 @@ void lkl_qdisc_parse_add(int ifindex, const char *entries);
  * @value - the value of the sysctl (e.g., "4096 87380 2147483647")
  */
 int lkl_sysctl(const char *path, const char *value);
+
+/**
+ * lkl_sysctl - read a sysctl value
+ *
+ * @path - the path to an sysctl entry (e.g., "net.ipv4.tcp_wmem");
+ */
+int lkl_sysctl_get(const char *path, char *buffer, int size);
 
 /**
  * lkl_sysctl_parse_write - Configure sysctl parameters with strings

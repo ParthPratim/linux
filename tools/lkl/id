@@ -1,0 +1,1986 @@
+bin/lkl-hijack.sh:7:## of hijack library (liblkl-hijack.so).
+bin/lkl-hijack.sh:15:script_dir=$(cd $(dirname ${BASH_SOURCE:-$0}); pwd)
+bin/lkl-hijack.sh:18:if [ -n ${LKL_HIJACK_DEBUG+x}  ]
+bin/lkl-hijack.sh:22:LD_PRELOAD=liblkl-hijack.so $*
+lklfuse.c:46:	FUSE_OPT_KEY("-h", KEY_HELP),
+lklfuse.c:47:	FUSE_OPT_KEY("--help", KEY_HELP),
+lklfuse.c:48:	FUSE_OPT_KEY("-V",             KEY_VERSION),
+lklfuse.c:49:	FUSE_OPT_KEY("--version",      KEY_VERSION),
+lklfuse.c:59:"    -o opt,[opt...]        mount options\n"
+lklfuse.c:60:"    -h   --help            print help\n"
+lklfuse.c:61:"    -V   --version         print version\n"
+lklfuse.c:64:"    -o log=FILE            log file\n"
+lklfuse.c:65:"    -o type=fstype         filesystem type\n"
+lklfuse.c:66:"    -o mb=memory in mb     ammount of memory to allocate\n"
+lklfuse.c:67:"    -o part=parition       partition to mount\n"
+lklfuse.c:68:"    -o ro                  open file read-only\n"
+lklfuse.c:69:"    -o opts=options        mount options (use \\ to escape , and =)\n"
+lklfuse.c:91:		fuse_opt_add_arg(args, "-ho");
+lklfuse.c:92:		fuse_main(args->argc, args->argv, NULL, NULL);
+lklfuse.c:97:		fuse_opt_add_arg(args, "--version");
+lklfuse.c:98:		fuse_main(args->argc, args->argv, NULL, NULL);
+lklfuse.c:109:	st->st_dev = in->st_dev;
+lklfuse.c:110:	st->st_ino = in->st_ino;
+lklfuse.c:111:	st->st_mode = in->st_mode;
+lklfuse.c:112:	st->st_nlink = in->st_nlink;
+lklfuse.c:113:	st->st_uid = in->st_uid;
+lklfuse.c:114:	st->st_gid = in->st_gid;
+lklfuse.c:115:	st->st_rdev = in->st_rdev;
+lklfuse.c:116:	st->st_size = in->st_size;
+lklfuse.c:117:	st->st_blksize = in->st_blksize;
+lklfuse.c:118:	st->st_blocks = in->st_blocks;
+lklfuse.c:119:	st->st_atim.tv_sec = in->lkl_st_atime;
+lklfuse.c:120:	st->st_atim.tv_nsec = in->st_atime_nsec;
+lklfuse.c:121:	st->st_mtim.tv_sec = in->lkl_st_mtime;
+lklfuse.c:122:	st->st_mtim.tv_nsec = in->st_mtime_nsec;
+lklfuse.c:123:	st->st_ctim.tv_sec = in->lkl_st_ctime;
+lklfuse.c:124:	st->st_ctim.tv_nsec = in->st_ctime_nsec;
+lklfuse.c:133:	ret = lkl_sys_fstat(fi->fh, &lkl_stat);
+lklfuse.c:163:		ret = len - 1;
+lklfuse.c:229:	if ((fi->flags & O_ACCMODE) == O_RDONLY)
+lklfuse.c:231:	else if ((fi->flags & O_ACCMODE) == O_WRONLY)
+lklfuse.c:233:	else if ((fi->flags & O_ACCMODE) == O_RDWR)
+lklfuse.c:236:		return -EINVAL;
+lklfuse.c:245:	fi->fh = ret;
+lklfuse.c:268:		ret = lkl_sys_pread64(fi->fh, buf, size, offset);
+lklfuse.c:271:		size -= ret;
+lklfuse.c:276:	return ret < 0 ? ret : orig_size - (ssize_t)size;
+lklfuse.c:287:		ret = lkl_sys_pwrite64(fi->fh, buf, size, offset);
+lklfuse.c:290:		size -= ret;
+lklfuse.c:295:	return ret < 0 ? ret : orig_size - (ssize_t)size;
+lklfuse.c:308:	stat->f_bsize = lkl_statfs.f_bsize;
+lklfuse.c:309:	stat->f_frsize = lkl_statfs.f_frsize;
+lklfuse.c:310:	stat->f_blocks = lkl_statfs.f_blocks;
+lklfuse.c:311:	stat->f_bfree = lkl_statfs.f_bfree;
+lklfuse.c:312:	stat->f_bavail = lkl_statfs.f_bavail;
+lklfuse.c:313:	stat->f_files = lkl_statfs.f_files;
+lklfuse.c:314:	stat->f_ffree = lkl_statfs.f_ffree;
+lklfuse.c:315:	stat->f_favail = stat->f_ffree;
+lklfuse.c:316:	stat->f_fsid = *(unsigned long *)&lkl_statfs.f_fsid.val[0];
+lklfuse.c:317:	stat->f_flag = lkl_statfs.f_flags;
+lklfuse.c:318:	stat->f_namemax = lkl_statfs.f_namelen;
+lklfuse.c:330:	return lkl_sys_close(fi->fh);
+lklfuse.c:337:		return lkl_sys_fdatasync(fi->fh);
+lklfuse.c:339:		return lkl_sys_fsync(fi->fh);
+lklfuse.c:373:	fi->fh = (uintptr_t)dir;
+lklfuse.c:393: * passes non-zero offset to the filler function.  When the buffer
+lklfuse.c:402:	struct lkl_dir *dir = (struct lkl_dir *)(uintptr_t)fi->fh;
+lklfuse.c:408:		st.st_ino = de->d_ino;
+lklfuse.c:409:		st.st_mode = de->d_type << 12;
+lklfuse.c:411:		if (fill(buf, de->d_name, &st, 0))
+lklfuse.c:423:	struct lkl_dir *dir = (struct lkl_dir *)(uintptr_t)fi->fh;
+lklfuse.c:431:	struct lkl_dir *dir = (struct lkl_dir *)(uintptr_t)fi->fh;
+lklfuse.c:454:	return lkl_sys_utimensat(-1, path, (struct __lkl__kernel_timespec *)ts,
+lklfuse.c:461:	return lkl_sys_fallocate(fi->fh, mode, offset, len);
+lklfuse.c:608:		ret = -1;
+lklfuse.c:614:		ret = -1;
+lklfuse.c:622:		ret = -1;
+lklfuse.c:628:		ret = -1;
+scripts/checkpatch.sh:1:#!/bin/sh -ex
+scripts/checkpatch.sh:3:if [ -z "$origin_master" ]; then
+scripts/checkpatch.sh:10:upstream=`git remote -v | grep $UPSTREAM | cut -f1 | head -n1`
+scripts/checkpatch.sh:11:lkl=`git remote -v | grep $LKL | cut -f1 | head -n1`
+scripts/checkpatch.sh:13:if [ -z "$upstream" ]; then
+scripts/checkpatch.sh:14:    git fetch --tags --progress git://$UPSTREAM
+scripts/checkpatch.sh:16:    git fetch --tags $upstream
+scripts/checkpatch.sh:19:if [ -z "$lkl" ]; then
+scripts/checkpatch.sh:20:    git remote add lkl-upstream git@$LKL || true
+scripts/checkpatch.sh:21:    lkl=`git remote -v | grep $LKL | cut -f1 | head -n1`
+scripts/checkpatch.sh:24:if [ -z "$lkl" ]; then
+scripts/checkpatch.sh:30:git fetch --tags $upstream
+scripts/checkpatch.sh:34:tag=`git tag --sort='-*authordate' | grep ^v | head -n1`
+scripts/checkpatch.sh:35:tmp=`mktemp -d`
+scripts/checkpatch.sh:37:commits=$(git log --no-merges --pretty=format:%h HEAD ^$lkl/master ^$tag)
+scripts/checkpatch.sh:39:    git format-patch -1 -o $tmp $c
+scripts/checkpatch.sh:42:if [ -z "$c" ]; then
+scripts/checkpatch.sh:48:./scripts/checkpatch.pl --ignore FILE_PATH_CHANGES $tmp/*.patch
+scripts/checkpatch.sh:53:#for c in `git log --merges --pretty=format:%h HEAD ^$origin_master ^$tag`; do
+scripts/checkpatch.sh:54:#    git log --pretty=email $c -1 > $tmp/$c.patch
+scripts/lkl-jenkins.sh:3:set -e
+scripts/lkl-jenkins.sh:5:script_dir=$(cd $(dirname ${BASH_SOURCE:-$0}); pwd)
+scripts/lkl-jenkins.sh:15:    make clean-conf
+scripts/lkl-jenkins.sh:16:    make -j4
+scripts/lkl-jenkins.sh:17:    make run-tests
+tests/disk.sh:3:script_dir=$(cd $(dirname ${BASH_SOURCE:-$0}); pwd)
+tests/disk.sh:9:    set -e
+tests/disk.sh:17:    if ! [ -z $ANDROID_WDIR ]; then
+tests/disk.sh:18:        adb shell mkdir -p $ANDROID_WDIR
+tests/disk.sh:23:    if ! [ -z $BSD_WDIR ]; then
+tests/disk.sh:24:        $MYSSH mkdir -p $BSD_WDIR
+tests/disk.sh:35:    set -e
+tests/disk.sh:37:    if ! [ -z $ANDROID_WDIR ]; then
+tests/disk.sh:40:    elif ! [ -z $BSD_WDIR ]; then
+tests/disk.sh:48:if [ "$1" = "-t" ]; then
+tests/disk.sh:54:if [ -z "$fstype" ]; then
+tests/disk.sh:58:if [ -z $(which mkfs.$fstype) ]; then
+tests/disk.sh:66:lkl_test_exec $script_dir/disk -d $file -t $fstype $@
+Makefile.autoconf:1:POSIX_HOSTS=elf64-x86-64 elf32-i386 elf64-x86-64-freebsd elf32-littlearm elf64-littleaarch64
+Makefile.autoconf:2:NT_HOSTS=pe-i386 pe-x86-64
+Makefile.autoconf:12:  $(eval include_paths=$(shell $(CC) -E -Wp,-v -xc /dev/null 2>&1 | grep '^ '))
+Makefile.autoconf:17:$(shell $(CC) -dM -E - </dev/null | grep $(1))
+Makefile.autoconf:30:  RTE_SDK ?= $(OUTPUT)/dpdk-17.02
+Makefile.autoconf:32:  DPDK_LIBS = -lrte_pmd_vmxnet3_uio -lrte_pmd_ixgbe -lrte_pmd_e1000
+Makefile.autoconf:33:  DPDK_LIBS += -lrte_pmd_virtio
+Makefile.autoconf:34:  DPDK_LIBS += -lrte_timer -lrte_hash -lrte_mbuf -lrte_ethdev -lrte_eal
+Makefile.autoconf:35:  DPDK_LIBS += -lrte_mempool -lrte_ring -lrte_pmd_ring
+Makefile.autoconf:36:  DPDK_LIBS += -lrte_kvargs -lrte_net
+Makefile.autoconf:37:  CFLAGS += -I$$(RTE_SDK)/$$(RTE_TARGET)/include -msse4.2 -mpopcnt
+Makefile.autoconf:38:  LDFLAGS +=-L$$(RTE_SDK)/$$(RTE_TARGET)/lib
+Makefile.autoconf:39:  LDFLAGS +=-Wl,--whole-archive $$(DPDK_LIBS) -Wl,--no-whole-archive -lm -ldl
+Makefile.autoconf:44:  LDLIBS += $(shell pkg-config --libs vdeplug)
+Makefile.autoconf:50:  LDFLAGS += -pie
+Makefile.autoconf:51:  CFLAGS += -fPIC $(LINUXINCLUDE)
+Makefile.autoconf:53:  $(if $(filter $(1),elf64-x86-64-freebsd),$(call bsd_host))
+Makefile.autoconf:59:  $(if $(filter $(1),elf64-x86-64-freebsd),$(call set_autoconf_var,NEEDS_LARGP,y))
+Makefile.autoconf:67:  LDFLAGS += -pie
+Makefile.autoconf:68:  CFLAGS += -fPIC -pthread
+Makefile.autoconf:70:  $(if $(call is_defined,__ANDROID__),$(call android_host),LDLIBS += -lrt -lpthread)
+Makefile.autoconf:71:  $(if $(filter $(1),elf64-x86-64-freebsd),$(call bsd_host))
+Makefile.autoconf:77:  $(if $(filter $(1),elf64-x86-64-freebsd),$(call set_autoconf_var,NEEDS_LARGP,y))
+Makefile.autoconf:82:  CFLAGS += -Wl,--enable-auto-image-base -Wl,--image-base -Wl,0x10000000 \
+Makefile.autoconf:83:  	 -Wl,--out-implib=$(OUTPUT)liblkl.dll.a -Wl,--export-all-symbols \
+Makefile.autoconf:84:	 -Wl,--enable-auto-import
+Makefile.autoconf:85:  LDFLAGS +=-Wl,--image-base -Wl,0x10000000 -Wl,--enable-auto-image-base \
+Makefile.autoconf:86:   	   -Wl,--out-implib=$(OUTPUT)liblkl.dll.a -Wl,--export-all-symbols \
+Makefile.autoconf:87:	   -Wl,--enable-auto-import
+Makefile.autoconf:93:  LDLIBS += -lws2_32
+Makefile.autoconf:96:  CFLAGS += -Iinclude/mingw32
+Makefile.autoconf:97:  $(if $(filter $(1),pe-x86-64),$(call nt64_host))
+Makefile.autoconf:109:  $(eval LD_FMT := $(shell $(LD) -r -print-output-format))
+Makefile.autoconf:117:	$(shell mkdir -p $(OUTPUT)/include)
+Makefile.autoconf:118:	$(shell mkdir -p $(OUTPUT)/tests)
+Makefile.autoconf:119:	$(shell echo -n "" > $(OUTPUT)/include/lkl_autoconf.h)
+Makefile.autoconf:120:	$(shell echo -n "" > $(OUTPUT)/tests/autoconf.sh)
+tests/cla.c:17:	*((int *)arg->store) = 1;
+tests/cla.c:23:	*((const char **)arg->store) = value;
+tests/cla.c:30:	*((int *)arg->store) = strtol(value, NULL, 0);
+tests/cla.c:36:	const char **set = arg->set;
+tests/cla.c:41:			*((int *)arg->store) = i;
+tests/cla.c:46:	return -1;
+tests/cla.c:54:		return -1;
+tests/cla.c:58:		return -1;
+tests/cla.c:59:	*((unsigned int *)arg->store) = addr;
+tests/cla.c:75:	for (arg = args; arg->short_name != 0; arg++) {
+tests/cla.c:76:		if (arg->short_name == name)
+tests/cla.c:87:	for (arg = args; arg->long_name; arg++) {
+tests/cla.c:88:		if (strcmp(arg->long_name, name) == 0)
+tests/cla.c:100:	for (arg = args; arg->long_name; arg++) {
+tests/cla.c:101:		fprintf(stderr, "-%c, --%-20s %s", arg->short_name,
+tests/cla.c:102:			arg->long_name, arg->help);
+tests/cla.c:103:		if (arg->type == CL_ARG_STR_SET) {
+tests/cla.c:104:			const char **set = arg->set;
+tests/cla.c:123:		if (argv[i][0] == '-') {
+tests/cla.c:124:			if (argv[i][1] != '-')
+tests/cla.c:133:			return -1;
+tests/cla.c:136:		if (arg->type == CL_ARG_USER || arg->type >= CL_ARG_END)
+tests/cla.c:137:			parser = arg->parser;
+tests/cla.c:139:			parser = parsers[arg->type];
+tests/cla.c:142:			fprintf(stderr, "can't parse --'%s'/-'%c'\n",
+tests/cla.c:143:				arg->long_name, args->short_name);
+tests/cla.c:144:			return -1;
+tests/cla.c:150:			return -1;
+tests/cla.c:153:		if (arg->has_arg)
+scripts/dpdk-sdk-build.sh:5:git clone -b v${dpdk_version} git://dpdk.org/dpdk dpdk-${dpdk_version}
+scripts/dpdk-sdk-build.sh:7:RTE_SDK=$(pwd)/dpdk-${dpdk_version}
+scripts/dpdk-sdk-build.sh:8:RTE_TARGET=$(uname -m)-native-linuxapp-gcc
+scripts/dpdk-sdk-build.sh:11:export EXTRA_CFLAGS="-fPIC -O0 -g3"
+scripts/dpdk-sdk-build.sh:13:set -e
+scripts/dpdk-sdk-build.sh:14:cd dpdk-${dpdk_version}
+scripts/dpdk-sdk-build.sh:15:make -j1 T=${RTE_TARGET} config
+scripts/dpdk-sdk-build.sh:16:make -j3 \
+tests/test.sh:3:script_dir=$(cd $(dirname ${BASH_SOURCE:-$0}); pwd)
+tests/test.sh:23:    if [ -z "$var_file" ]; then
+tests/test.sh:42:    # run in a separate shell to avoid -e terminating us
+tests/test.sh:63:    delta=$(((stop-start)/1000))
+tests/test.sh:65:    echo " ---"
+tests/test.sh:68:    echo -e " ..."
+tests/test.sh:80:    export suite_name="${2// /\-}"
+tests/test.sh:96:    if [ -n "$LKL_HOST_CONFIG_NT" ]; then
+tests/test.sh:102:        if [ -n "$SUDO" ]; then
+tests/test.sh:106:        if [ -n "$ANDROID_USER" ]; then
+tests/test.sh:116:        WRAPPER="qemu-arm-static"
+tests/test.sh:119:        if [ -n "$SUDO" ]; then
+tests/test.sh:125:        set - $BSD_WDIR/$(basename $file) $args
+tests/test.sh:127:    elif [ -n "$GDB" ]; then
+tests/test.sh:130:        set - -ex "run $args" -ex quit $file
+tests/test.sh:132:    elif [ -n "$VALGRIND" ]; then
+tests/test.sh:133:        WRAPPER="valgrind --suppressions=$script_dir/valgrind.supp \
+tests/test.sh:134:                  --leak-check=full --show-leak-kinds=all --xml=yes \
+tests/test.sh:135:                  --xml-file=valgrind-$suite_name.xml"
+tests/test.sh:145:    if [ -z "$QUIET" ]; then
+tests/test.sh:146:        SHOPTS="-x"
+tests/test.sh:149:    if [ -n "$LKL_HOST_CONFIG_ANDROID" ]; then
+tests/test.sh:154:        if [ -n "$ANDROID_USER" ]; then
+tests/test.sh:160:    elif [ -n "$LKL_HOST_CONFIG_BSD" ]; then
+tests/test.sh:169:    while [ -n "$1" ]; do
+tests/test.sh:177:        adb shell mkdir -p $ANDROID_WDIR/$dir
+tests/test.sh:192:# see the definitions in lkl/lkl-docker:circleci/freebsd11/Dockerfile
+tests/test.sh:195:    while [ -n "$1" ]; do
+tests/test.sh:203:        $MYSSH mkdir -p $BSD_WDIR/$dir
+tests/test.sh:205:        $MYSCP -P 7722 -r $basedir/$1 root@localhost:$BSD_WDIR/$dir
+tests/test.sh:216:    $MYSCP -P 7722 -r $1 root@localhost:$2
+tests/test.sh:221:    adb shell rm -rf $ANDROID_WDIR
+tests/test.sh:226:    $MYSSH rm -rf $BSD_WDIR
+tests/test.sh:229:if [ -n "$LKL_HOST_CONFIG_ANDROID" ]; then
+tests/test.sh:232:    adb shell mkdir -p $ANDROID_WDIR
+tests/test.sh:235:if [ -n "$LKL_HOST_CONFIG_BSD" ]; then
+tests/test.sh:238:    $MYSSH mkdir -p $BSD_WDIR
+tests/hijack-test.sh:3:script_dir=$(cd $(dirname ${BASH_SOURCE:-$0}); pwd)
+tests/hijack-test.sh:7:    test -f ${VDESWITCH}.pid && kill $(cat ${VDESWITCH}.pid)
+tests/hijack-test.sh:8:    rm -rf ${wdir}
+tests/hijack-test.sh:15:    cfgjson=${wdir}/hijack-test$1.conf
+tests/hijack-test.sh:17:    if [ -n "$LKL_HOST_CONFIG_ANDROID" ]; then
+tests/hijack-test.sh:44:    set -e
+tests/hijack-test.sh:46:    run_hijack ${ping} -c 1 127.0.0.1
+tests/hijack-test.sh:51:    set -e
+tests/hijack-test.sh:53:    run_hijack ${ping6} -c 1 ::1
+tests/hijack-test.sh:58:    set -e
+tests/hijack-test.sh:60:    if [ -n "$LKL_HOST_CONFIG_ANDROID" ]; then
+tests/hijack-test.sh:61:        echo "TODO: android-23 doesn't call destructor..."
+tests/hijack-test.sh:81:    set -e
+tests/hijack-test.sh:92:    [ $(echo "$ans" | wc -l) = 1 ]
+tests/hijack-test.sh:98:    set -e
+tests/hijack-test.sh:127:    set -e
+tests/hijack-test.sh:170:    run_hijack_cfg ${ping} -c 1 -w 10 $(ip_host)
+tests/hijack-test.sh:173:    run_hijack_cfg ${ping6} -c 1 -w 10 $(ip6_host)
+tests/hijack-test.sh:180:    set -e
+tests/hijack-test.sh:221:    set -e
+tests/hijack-test.sh:224:    run_hijack_cfg ${ping} -c 1 $(ip_host)
+tests/hijack-test.sh:225:    run_hijack_cfg ${ping6} -c 1 $(ip6_host)
+tests/hijack-test.sh:230:    set -e
+tests/hijack-test.sh:233:    lkl_test_cmd sudo ip -6 neigh del $(ip6_lkl) dev $(tap_ifname)
+tests/hijack-test.sh:237:    lkl_test_cmd sudo ping -i 0.01 -c 65 $(ip_lkl)
+tests/hijack-test.sh:238:    lkl_test_cmd sudo ping6 -i 0.01 -c 65 $(ip6_lkl)
+tests/hijack-test.sh:243:    set -e
+tests/hijack-test.sh:269:    echo "$ans" | tail -n 15 | grep "12:34:56:78:9a:bc"
+tests/hijack-test.sh:270:    echo "$ans" | tail -n 15 | grep "12:34:56:78:9a:be"
+tests/hijack-test.sh:274:    echo "$ans" | tail -n 15 | grep "$(ip_host)"
+tests/hijack-test.sh:277:    ans=$(run_hijack_cfg ip -6 route show) || true
+tests/hijack-test.sh:278:    echo "$ans" | tail -n 15 | grep "$(ip6_host)"
+tests/hijack-test.sh:283:    set -e
+tests/hijack-test.sh:317:    set -e
+tests/hijack-test.sh:346:    set -e
+tests/hijack-test.sh:371:    set -e
+tests/hijack-test.sh:378:    set -e
+tests/hijack-test.sh:386:    set -e
+tests/hijack-test.sh:388:    if [ -n "$LKL_HOST_CONFIG_ANDROID" ]; then
+tests/hijack-test.sh:412:    qdisc=$(run_hijack_cfg tc -s -d qdisc show)
+tests/hijack-test.sh:420:    set -e
+tests/hijack-test.sh:468:    run_hijack_cfg ${ping} -c 1 $(ip_host)
+tests/hijack-test.sh:469:    run_hijack_cfg ${ping6} -c 1 $(ip6_host)
+tests/hijack-test.sh:470:    run_hijack_cfg ${ping} -c 1 $(ip_host 1)
+tests/hijack-test.sh:471:    run_hijack_cfg ${ping6} -c 1 $(ip6_host 1)
+tests/hijack-test.sh:514:    echo "$ans" | tail -n 15 | grep "12:34:56:78:9a:bc"
+tests/hijack-test.sh:515:    echo "$ans" | tail -n 15 | grep "12:34:56:78:9a:be"
+tests/hijack-test.sh:516:    echo "$ans" | tail -n 15 | grep "12:34:56:78:9a:bd"
+tests/hijack-test.sh:517:    echo "$ans" | tail -n 15 | grep "12:34:56:78:9a:bf"
+tests/hijack-test.sh:523:    echo "$ans" | tail -n 15 | grep "$(ip_host)"
+tests/hijack-test.sh:528:    ans=$(run_hijack_cfg ip -6 route show) || true
+tests/hijack-test.sh:529:    echo "$ans" | tail -n 15 | grep "$(ip6_host)"
+tests/hijack-test.sh:579:    addr=$(run_hijack_cfg ip -6 rule show)
+tests/hijack-test.sh:592:    addr=$(run_hijack_cfg ip -6 route show table 5)
+tests/hijack-test.sh:605:    addr=$(run_hijack_cfg ip -6 route show table 7)
+tests/hijack-test.sh:635:    vde_switch -d -t $(tap_ifname) -s ${VDESWITCH} -p ${VDESWITCH}.pid
+tests/hijack-test.sh:651:    run_hijack_cfg ./ping $(ip_host) -c 1
+tests/hijack-test.sh:656:    lkl_test_cmd sudo arp -d $(ip_lkl)
+tests/hijack-test.sh:657:    lkl_test_cmd sudo ping -i 0.01 -c 65 $(ip_lkl) &
+tests/hijack-test.sh:662:source ${script_dir}/net-setup.sh
+tests/hijack-test.sh:664:if [[ ! -e ${basedir}/lib/hijack/liblkl-hijack.so ]]; then
+tests/hijack-test.sh:666:    echo "missing liblkl-hijack.so"
+tests/hijack-test.sh:670:if [ -n "$LKL_HOST_CONFIG_ANDROID" ]; then
+tests/hijack-test.sh:672:    adb_push lib/hijack/liblkl-hijack.so bin/lkl-hijack.sh tests/net-setup.sh \
+tests/hijack-test.sh:673:             tests/run_netperf.sh tests/hijack-test.sh
+tests/hijack-test.sh:676:    hijack="$wdir/bin/lkl-hijack.sh"
+tests/hijack-test.sh:681:    wdir=$(mktemp -d)
+tests/hijack-test.sh:686:    hijack=$basedir/bin/lkl-hijack.sh
+tests/hijack-test.sh:705:if [ -z "$(QUIET=1 lkl_test_cmd which mkfifo)" ]; then
+tests/hijack-test.sh:716:if ! lkl_test_cmd test -c /dev/net/tun &>/dev/null; then
+tests/hijack-test.sh:747:if [ -z "$LKL_HOST_CONFIG_VIRTIO_NET_VDE" ]; then
+tests/hijack-test.sh:750:elif [ ! -x "$(which vde_switch)" ]; then
+tests/Build:1:boot-y += boot.o test.o
+tests/Build:2:disk-y += disk.o cla.o test.o
+tests/Build:3:disk-vfio-pci-y += disk-vfio-pci.o cla.o test.o
+tests/Build:4:net-test-y += net-test.o cla.o test.o
+tests/disk.c:36:static int disk_id = -1;
+tests/disk.c:144:		wr += lkl_test_logf("%s ", de->d_name);
+tests/disk.c:182:		return -1;
+tests/run_netperf.sh:6:set -e
+tests/run_netperf.sh:8:script_dir=$(cd $(dirname ${BASH_SOURCE:-$0}); pwd)
+tests/run_netperf.sh:9:hijack_script=${script_dir}/../bin/lkl-hijack.sh
+tests/run_netperf.sh:15:taskset_cmd="taskset -c 1"
+tests/run_netperf.sh:18:if [ ! -x "$(which netperf)" ]; then
+tests/run_netperf.sh:23:if [ $# -ge 1 ]; then
+tests/run_netperf.sh:26:if [ $# -ge 2 ]; then
+tests/run_netperf.sh:29:if [ $# -ge 3 ]; then
+tests/run_netperf.sh:32:if [ $# -ge 4 ]; then
+tests/run_netperf.sh:35:if [ $# -ge 5 ]; then
+tests/run_netperf.sh:51:    rm -rf ${work_dir}
+tests/run_netperf.sh:55:# hijack-test.sh. Needs to set up things first.
+tests/run_netperf.sh:56:if [ -z ${LKL_HIJACK_CONFIG_FILE+x} ]; then
+tests/run_netperf.sh:59:    work_dir=$(mktemp -d)
+tests/run_netperf.sh:60:    cfgjson=${work_dir}/hijack-test.conf
+tests/run_netperf.sh:78:    . $script_dir/net-setup.sh
+tests/run_netperf.sh:86:netserver -D -N -p $TEST_NETSERVER_PORT &
+tests/run_netperf.sh:93:    set -x
+tests/run_netperf.sh:94:    $taskset_cmd ${hijack_script} netperf -p $TEST_NETSERVER_PORT -H $host_ip \
+tests/run_netperf.sh:95:		         -t $test_name -l $test_len
+tests/valgrind.supp:4:   match-leak-kinds: possible
+tests/valgrind.supp:22:   match-leak-kinds: possible
+tests/lklfuse.sh:3:script_dir=$(cd $(dirname ${BASH_SOURCE:-$0}); pwd)
+tests/lklfuse.sh:9:    set -e
+tests/lklfuse.sh:12:    fusermount -u $dir
+tests/lklfuse.sh:18:# $1 - disk image
+tests/lklfuse.sh:19:# $2 - fstype
+tests/lklfuse.sh:22:    set -e
+tests/lklfuse.sh:29:# $1 - disk image
+tests/lklfuse.sh:30:# $2 - mount point
+tests/lklfuse.sh:31:# $3 - filesystem type
+tests/lklfuse.sh:34:    ${script_dir}/../lklfuse $1 $2 -o type=$3
+tests/lklfuse.sh:37:# $1 - mount point
+tests/lklfuse.sh:40:    set -e
+tests/lklfuse.sh:44:    if ! [ -e ]; then exit 1; fi
+tests/lklfuse.sh:47:    if ! [ -d ]; then exit 1; fi
+tests/lklfuse.sh:51:# $1 - dir
+tests/lklfuse.sh:52:# $2 - filesystem type
+tests/lklfuse.sh:55:    set -e
+tests/lklfuse.sh:57:    if [ -z $(which stress-ng) ]; then
+tests/lklfuse.sh:58:        echo "missing stress-ng"
+tests/lklfuse.sh:68:    stress-ng --class filesystem --all 0 --timeout 10 \
+tests/lklfuse.sh:69:	      --exclude fiemap,$exclude --fallocate-bytes 10m \
+tests/lklfuse.sh:70:	      --sync-file-bytes 10m
+tests/lklfuse.sh:73:if [ "$1" = "-t" ]; then
+tests/lklfuse.sh:79:if [ -z "$fstype" ]; then
+tests/lklfuse.sh:83:if ! [ -x $script_dir/../lklfuse ]; then
+tests/lklfuse.sh:89:if ! [ -e /dev/fuse ]; then
+tests/lklfuse.sh:97:dir=`mktemp -d`
+tests/lklfuse.sh:106:# stress-ng returns 2 with no apparent failures so skip it for now
+tests/run.py:29:            print("  TEST       %-8s %.50s" %
+tests/run.py:37:            print("  SUITE      %-8s %s" % (status, obj.name))
+tests/run.py:52:    'disk.sh -t ext4',
+tests/run.py:53:    'disk.sh -t btrfs',
+tests/run.py:54:    'disk.sh -t vfat',
+tests/run.py:55:    'disk.sh -t xfs',
+tests/run.py:56:    'net.sh -b loopback',
+tests/run.py:57:    'net.sh -b tap',
+tests/run.py:58:    'net.sh -b pipe',
+tests/run.py:59:    'net.sh -b raw',
+tests/run.py:60:    'net.sh -b macvtap',
+tests/run.py:61:    'lklfuse.sh -t ext4',
+tests/run.py:62:    'lklfuse.sh -t btrfs',
+tests/run.py:63:    'lklfuse.sh -t vfat',
+tests/run.py:64:    'lklfuse.sh -t xfs',
+tests/run.py:65:    'hijack-test.sh',
+tests/run.py:66:    'disk-vfio-pci.sh -t ext4 run',
+tests/run.py:67:    'disk-vfio-pci.sh -t btrfs run',
+tests/run.py:68:    'disk-vfio-pci.sh -t vfat run',
+tests/run.py:69:    'disk-vfio-pci.sh -t xfs run'
+tests/run.py:75:parser.add_argument('--junit-dir',
+tests/run.py:77:parser.add_argument('--gdb', action='store_true', default=False,
+tests/run.py:78:                    help='run simple tests under gdb; implies --pass-through')
+tests/run.py:79:parser.add_argument('--pass-through', action='store_true',  default=False,
+tests/run.py:81:parser.add_argument('--valgrind', action='store_true', default=False,
+tests/run.py:162:            val_xml = 'valgrind-%s.xml' % os.path.basename(s.name).replace(' ','-')
+tests/run.py:174:            doc = ET.parse(os.path.join(args.junit_dir, 'valgrind-%s_xunit.xml' \
+tests/run.py:175:                                        % (os.path.basename(s.name).replace(' ','-'))))
+tests/test.h:18: * @name - test name, it assume test function is named test_@name
+tests/test.h:19: * @vargs - arguments to be passed to the function
+tests/test.h:24: * lkl_test_run - run a test suite
+tests/test.h:26: * @tests - the list of tests to run
+tests/test.h:27: * @nr - number of tests
+tests/test.h:28: * @fmt - format string to be used for suite name
+tests/test.h:33: * lkl_test_log - store a string in the test log buffer
+tests/test.h:34: * @str - the string to log (can be non-NULL terminated)
+tests/test.h:35: * @len - the string length
+tests/test.h:40: * lkl_test_logf - printf like function to store into the test log buffer
+tests/test.h:41: * @fmt - printf format string
+tests/test.h:42: * @vargs - arguments to the format string
+tests/test.h:47: * LKL_TEST_CALL - create a test function as for a LKL call
+tests/test.h:53: * @name - test name; must be unique because it is part of the the
+tests/test.h:55: * @call - function to call
+tests/test.h:56: * @expect - expected return value for success
+tests/test.h:57: * @args - arguments to pass to the LKL call
+tests/disk-vfio-pci.c:1:// SPDX-License-Identifier: GPL-2.0
+tests/disk-vfio-pci.c:71:		wr += lkl_test_logf("%s ", de->d_name);
+tests/disk-vfio-pci.c:103:		return -1;
+tests/disk-vfio-pci.c:111:			    "disk-vfio-pci %s", cla.fstype);
+tests/tap13.py:75:            self.tests[-1].end()
+tests/tap13.py:106:        return self.tests[-1]
+tests/tap13.py:131:        return self.suites[-1]
+tests/tap13.py:134:        return self.suites[-1].tests[-1]
+tests/tap13.py:154:    RE_YAMLISH_START = re.compile(r"^\s*---.*$")
+tests/net-setup.sh:3:if [ -n "$LKL_HOST_CONFIG_BSD" ]; then
+tests/net-setup.sh:16:# $1 - count
+tests/net-setup.sh:17:# $2 - netcount
+tests/net-setup.sh:21:         `echo $TEST_IP_NETWORK | sed -e 's/\./ /g'`)
+tests/net-setup.sh:22:    NET_COUNT=$(( 1 << (32 - $TEST_IP_NETMASK) ))
+tests/net-setup.sh:23:    NEXT_IP_HEX=$(printf %.8X `echo $((0x$IP_HEX + $1 + ${2:-0} * $NET_COUNT))`)
+tests/net-setup.sh:25:          `echo $NEXT_IP_HEX | sed -r 's/(..)/0x\1 /g'`)
+tests/net-setup.sh:26:    echo -n "$NEXT_IP"
+tests/net-setup.sh:29:# $1 - count
+tests/net-setup.sh:30:# $2 - netcount
+tests/net-setup.sh:35:    echo -n "$(printf "%x" $((0x$IP6_PREFIX+${2:-0})))::$(($IP6_HOST+$1))"
+tests/net-setup.sh:51:    echo -n "$(ip_host $1)/$TEST_IP_NETMASK"
+tests/net-setup.sh:71:    echo -n "$(ip6_host $1)/$TEST_IP6_NETMASK"
+tests/net-setup.sh:81:    echo -n "$TEST_TAP_IFNAME${1:-0}"
+tests/net-setup.sh:86:    if [ -n "$LKL_HOST_CONFIG_ANDROID" ]; then
+tests/net-setup.sh:87:        if ! lkl_test_cmd test -d /dev/net &>/dev/null; then
+tests/net-setup.sh:89:            lkl_test_cmd sudo ln -s /dev/tun /dev/net/tun
+tests/net-setup.sh:101:    if [ -n "$LKL_HOST_CONFIG_BSD" ]; then
+tests/net-setup.sh:113:    lkl_test_cmd sudo ip -6 addr add dev $(tap_ifname $1) $(ip6_host_mask $1)
+tests/net-setup.sh:115:    if [ -n "$LKL_HOST_CONFIG_ANDROID" ]; then
+tests/net-setup.sh:119:        lkl_test_cmd sudo ip -6 route add $(ip6_net_mask $1) \
+tests/net-setup.sh:126:    if [ -n "$LKL_HOST_CONFIG_BSD" ]; then
+tests/boot.c:40:	delta = 1e9*(stop.tv_sec - start.tv_sec) +
+tests/boot.c:41:		(stop.tv_nsec - start.tv_nsec);
+tests/boot.c:62:	*max = -1;
+tests/boot.c:68:		delta = stop - start;
+tests/boot.c:109:LKL_TEST_CALL(failopen, lkl_sys_open, -LKL_ENOENT, "/file2", 0, 0);
+tests/boot.c:325:	for (pos = buf; pos - buf < ret; pos += de->d_reclen) {
+tests/boot.c:328:		wr += lkl_test_logf("%s ", de->d_name);
+tests/boot.c:390:	/* As far as I know, thread IDs are non-zero on all reasonable
+tests/boot.c:464:	while (--count > 0) {
+tests/valgrind2xunit.py:5:## http://humdi.net/wiki/tips/valgrind-to-xunit-xml-converter
+tests/valgrind2xunit.py:20:out.write('<?xml version="1.0" encoding="UTF-8"?>\n')
+tests/net.sh:3:script_dir=$(cd $(dirname ${BASH_SOURCE:-$0}); pwd)
+tests/net.sh:6:source $script_dir/net-setup.sh
+tests/net.sh:10:    set -e
+tests/net.sh:17:        rm -rf $work_dir
+tests/net.sh:33:    HOST_IF=$(lkl_test_cmd ip route get $TEST_HOST | head -n1 |cut -d ' ' -f5)
+tests/net.sh:34:    HOST_GW=$(lkl_test_cmd ip route get $TEST_HOST | head -n1 | cut -d ' ' -f3)
+tests/net.sh:35:    if lkl_test_cmd ping -c1 -w1 $HOST_GW; then
+tests/net.sh:37:    elif lkl_test_cmd ping -c1 -w1 $TEST_HOST; then
+tests/net.sh:49:    set -e
+tests/net.sh:61:        if [ -z $(lkl_test_cmd which mkfifo) ]; then
+tests/net.sh:65:            work_dir=$(lkl_test_cmd mktemp -d)
+tests/net.sh:75:        if ! lkl_test_cmd test -c /dev/net/tun; then
+tests/net.sh:76:            if [ -z "$LKL_HOST_CONFIG_BSD" ]; then
+tests/net.sh:84:        if [ -n "$LKL_HOST_CONFIG_BSD" ]; then
+tests/net.sh:97:                                 grep -o ^[0-9]*)
+tests/net.sh:103:        if -z [ $LKL_TEST_NET_DPDK ]; then
+tests/net.sh:119:        lkl_test_exec $script_dir/net-test --dst 127.0.0.1
+tests/net.sh:122:        VALGRIND="" lkl_test_exec $script_dir/net-test --backend pipe \
+tests/net.sh:123:                      --ifname "$fifo1|$fifo2" \
+tests/net.sh:124:                      --ip $(ip_host) --netmask-len $TEST_IP_NETMASK \
+tests/net.sh:125:                      --sleep 1800 >/dev/null &
+tests/net.sh:126:        cp $script_dir/net-test $script_dir/net-test2
+tests/net.sh:129:        lkl_test_exec $script_dir/net-test2 --backend pipe \
+tests/net.sh:130:                      --ifname "$fifo2|$fifo1" \
+tests/net.sh:131:                      --ip $(ip_lkl) --netmask-len $TEST_IP_NETMASK \
+tests/net.sh:132:                      --dst $(ip_host)
+tests/net.sh:133:        rm -f $script_dir/net-test2
+tests/net.sh:138:        lkl_test_exec $script_dir/net-test --backend tap \
+tests/net.sh:139:                      --ifname $(tap_ifname) \
+tests/net.sh:140:                      --ip $(ip_lkl) --netmask-len $TEST_IP_NETMASK \
+tests/net.sh:141:                      --dst $(ip_host)
+tests/net.sh:144:        lkl_test_exec sudo $script_dir/net-test --backend raw \
+tests/net.sh:145:                      --ifname $HOST_IF --dhcp --dst $TEST_IP_REMOTE
+tests/net.sh:148:        lkl_test_exec $script_dir/net-test --backend macvtap \
+tests/net.sh:149:                      --ifname $MACVTAP \
+tests/net.sh:150:                      --dhcp --dst $TEST_IP_REMOTE
+tests/net.sh:153:        lkl_test_exec sudo $script_dir/net-test --backend dpdk \
+tests/net.sh:154:                      --ifname dpdk0 \
+tests/net.sh:155:                      --ip $(ip_lkl) --netmask-len $TEST_IP_NETMASK \
+tests/net.sh:156:                      --dst $(ip_host)
+tests/net.sh:161:if [ "$1" = "-b" ]; then
+tests/net.sh:167:if [ -z "$backend" ]; then
+tests/disk-vfio-pci.sh:2:# SPDX-License-Identifier: GPL-2.0
+tests/disk-vfio-pci.sh:4:script_dir=$(cd $(dirname ${BASH_SOURCE:-$0}); pwd)
+tests/disk-vfio-pci.sh:9:bin_name="disk-vfio-pci"
+tests/disk-vfio-pci.sh:26:    $MYSSH sudo modprobe vfio-pci
+tests/disk-vfio-pci.sh:27:    $MYSSH "sh -c 'echo $nvme_id |
+tests/disk-vfio-pci.sh:28:    	       	       sudo tee /sys/bus/pci/drivers/vfio-pci/new_id'"
+tests/disk-vfio-pci.sh:29:    $MYSSH "sh -c 'echo $pciname |
+tests/disk-vfio-pci.sh:31:    $MYSSH "sh -c 'echo $pciname |
+tests/disk-vfio-pci.sh:32:    	       	       sudo tee /sys/bus/pci/drivers/vfio-pci/bind'"
+tests/disk-vfio-pci.sh:39:    $MYSSH "sh -c 'echo $pciname |
+tests/disk-vfio-pci.sh:40:    	       	       sudo tee /sys/bus/pci/drivers/vfio-pci/unbind'"
+tests/disk-vfio-pci.sh:41:    $MYSSH "sh -c 'echo $pciname |
+tests/disk-vfio-pci.sh:47:    if [ -z "$LKL_QEMU_TEST" ]; then
+tests/disk-vfio-pci.sh:48:	lkl_test_plan 0 "disk-vfio-pci $fstype"
+tests/disk-vfio-pci.sh:51:	lkl_test_plan 1 "disk-vfio-pci $fstype"
+tests/disk-vfio-pci.sh:53:	lkl_test_exec $MYSSH ./$bin_name -n 0000:00:03.0 -t $fstype
+tests/disk-vfio-pci.sh:54:	lkl_test_plan 1 "disk-vfio-pci $fstype"
+tests/disk-vfio-pci.sh:59:if [ "$1" = "-t" ]; then
+tests/disk-vfio-pci.sh:65:if [ -z "$fstype" ]; then
+tests/net-test.c:53:	{"netmask-len", 'n', "IPv4 netmask length", 1, CL_ARG_INT,
+tests/net-test.c:71:		nleft -= 2;
+tests/net-test.c:125:	icmp->type = LKL_ICMP_ECHO;
+tests/net-test.c:126:	icmp->code = 0;
+tests/net-test.c:127:	icmp->checksum = 0;
+tests/net-test.c:128:	icmp->un.echo.sequence = 0;
+tests/net-test.c:129:	icmp->un.echo.id = 0;
+tests/net-test.c:130:	icmp->checksum = in_cksum((u_short *)icmp, sizeof(*icmp), 0);
+tests/net-test.c:159:	icmp = (struct lkl_icmphdr *)(buf + iph->ihl * 4);
+tests/net-test.c:161:	if ((icmp->type != LKL_ICMP_ECHOREPLY || icmp->code != 0) &&
+tests/net-test.c:162:	    (icmp->type != LKL_ICMP_ECHO)) {
+tests/net-test.c:164:			      icmp->type, icmp->code);
+tests/net-test.c:305:		return -1;
+tests/net-test.c:309:		return -1;
+tests/test.c:14:	if ((unsigned int)(*ptr - log_buf) >= sizeof(log_buf))
+tests/test.c:58:		const struct lkl_test *t = &tests[i-1];
+tests/test.c:61:		printf("* %d %s\n", i, t->name);
+tests/test.c:66:		ret = t->fn(t->arg1, t->arg2, t->arg3);
+tests/test.c:72:			printf("ok %d %s\n", i, t->name);
+tests/test.c:75:			printf("ok %d %s # SKIP\n", i, t->name);
+tests/test.c:84:			printf("not ok %d %s\n", i, t->name);
+tests/test.c:87:		printf(" ---\n");
+tests/test.c:88:		delta_us = (stop - start) * 1000000 / CLOCKS_PER_SEC;
+tests/test.c:107:	while (len--)
+tests/boot.sh:3:script_dir=$(cd $(dirname ${BASH_SOURCE:-$0}); pwd)
+fs2tar.c:20:char args_doc[] = "-t fstype fsimage_path tar_path";
+fs2tar.c:22:	{"enable-printk", 'p', 0, 0, "show Linux printks"},
+fs2tar.c:24:	{"filesystem-type", 't', "string", 0,
+fs2tar.c:25:	 "select filesystem type - mandatory"},
+fs2tar.c:26:	{"selinux-contexts", 's', "file", 0,
+fs2tar.c:42:	struct cl_args *cla = state->input;
+fs2tar.c:46:		cla->printk = 1;
+fs2tar.c:49:		cla->part = atoi(arg);
+fs2tar.c:52:		cla->fsimg_type = arg;
+fs2tar.c:55:		cla->selinux = fopen(arg, "w");
+fs2tar.c:56:		if (!cla->selinux) {
+fs2tar.c:59:			return -1;
+fs2tar.c:63:		if (!cla->fsimg_path)
+fs2tar.c:64:			cla->fsimg_path = arg;
+fs2tar.c:65:		else if (!cla->tar_path)
+fs2tar.c:66:			cla->tar_path = arg;
+fs2tar.c:68:			return -1;
+fs2tar.c:71:		if (state->arg_num < 2 || !cla->fsimg_type)
+fs2tar.c:108:				ret = -archive_errno(tar);
+fs2tar.c:146:	st->st_dev = fst->st_dev;
+fs2tar.c:147:	st->st_ino = fst->st_ino;
+fs2tar.c:148:	st->st_mode = fst->st_mode;
+fs2tar.c:149:	st->st_nlink = fst->st_nlink;
+fs2tar.c:150:	st->st_uid = fst->st_uid;
+fs2tar.c:151:	st->st_gid = fst->st_gid;
+fs2tar.c:152:	st->st_rdev = fst->st_rdev;
+fs2tar.c:153:	st->st_size = fst->st_size;
+fs2tar.c:154:	st->st_blksize = fst->st_blksize;
+fs2tar.c:155:	st->st_blocks = fst->st_blocks;
+fs2tar.c:156:	st->st_atim.tv_sec = fst->lkl_st_atime;
+fs2tar.c:157:	st->st_atim.tv_nsec = fst->st_atime_nsec;
+fs2tar.c:158:	st->st_mtim.tv_sec = fst->lkl_st_mtime;
+fs2tar.c:159:	st->st_mtim.tv_nsec = fst->st_mtime_nsec;
+fs2tar.c:160:	st->st_ctim.tv_sec = fst->lkl_st_ctime;
+fs2tar.c:161:	st->st_ctim.tv_nsec = fst->st_ctime_nsec;
+fs2tar.c:193:	for (i = xattr_list; i - xattr_list < xattr_list_size;
+fs2tar.c:241:	snprintf(new_path, sizeof(new_path), "%s/%s", path, de->d_name);
+fs2tar.c:243:		 de->d_name);
+fs2tar.c:321:		for (pos = buf; pos - buf < buf_len; pos += de->d_reclen) {
+fs2tar.c:324:			if (!strcmp(de->d_name, ".") ||
+fs2tar.c:325:			    !strcmp(de->d_name, ".."))
+fs2tar.c:348:		return -1;
+Build:1:CFLAGS_lklfuse.o += -D_FILE_OFFSET_BITS=64
+Build:3:cptofs-$(LKL_HOST_CONFIG_ARCHIVE) += cptofs.o
+Build:4:fs2tar-$(LKL_HOST_CONFIG_ARCHIVE) += fs2tar.o
+Build:5:lklfuse-$(LKL_HOST_CONFIG_FUSE) += lklfuse.o
+Makefile:1:# Do not use make's built-in rules
+Makefile:2:# (this improves performance and avoids hard-to-debug behaviour);
+Makefile:5:MAKEFLAGS += -r --no-print-directory
+Makefile:22:-include ../scripts/Makefile.include
+Makefile:38:	$(call QUIET_AUTOCONF, headers)$(MAKE) -f Makefile.autoconf -s
+Makefile:40:-include $(OUTPUT)Makefile.conf
+Makefile:42:export CFLAGS += -I$(OUTPUT)/include -Iinclude -Wall -g -O2 -Wextra \
+Makefile:43:	 -Wno-unused-parameter \
+Makefile:44:	 -Wno-missing-field-initializers -fno-strict-aliasing
+Makefile:46:-include Targets
+Makefile:48:TARGETS := $(progs-y:%=$(OUTPUT)%$(EXESUF))
+Makefile:49:TARGETS += $(libs-y:%=$(OUTPUT)%$(SOSUF))
+Makefile:55:	$(Q)ln -sf `which gnustat` bin/stat
+Makefile:62:	$(Q)$(MAKE) -C ../.. ARCH=lkl $(KOPT) defconfig
+Makefile:65:	$(MAKE) -C ../.. ARCH=lkl $(KOPT) install INSTALL_PATH=$(OUTPUT)
+Makefile:68:$(OUTPUT)%$(SOSUF): LDFLAGS += -shared -nodefaultlibs -nostdlib
+Makefile:69:$(OUTPUT)%$(SOSUF): $(OUTPUT)%-in.o $(OUTPUT)liblkl.a
+Makefile:70:	$(QUIET_LINK)$(CC) $(LDFLAGS) $(LDFLAGS_$*-y) -o $@ $^ $(LDLIBS) $(LDLIBS_$*-y)
+Makefile:73:$(OUTPUT)liblkl$(SOSUF): $(OUTPUT)%-in.o $(OUTPUT)lib/lkl.o
+Makefile:74:$(OUTPUT)liblkl.a: $(OUTPUT)lib/liblkl-in.o $(OUTPUT)lib/lkl.o
+Makefile:75:	$(QUIET_AR)$(AR) -rc $@ $^
+Makefile:78:$(OUTPUT)%$(EXESUF): $(OUTPUT)%-in.o $(OUTPUT)liblkl.a
+Makefile:79:	$(QUIET_LINK)$(CC) $(LDFLAGS) $(LDFLAGS_$*-y) -o $@ $^ $(LDLIBS) $(LDLIBS_$*-y)
+Makefile:82:$(OUTPUT)%-in.o: $(OUTPUT)lib/lkl.o FORCE
+Makefile:83:	$(Q)$(MAKE) -f $(srctree)/tools/build/Makefile.build dir=$(patsubst %/,%,$(dir $*)) obj=$(notdir $*)
+Makefile:87:	$(Q)if ! [ -e $@ ]; then ln -s $< $@; fi
+Makefile:90:#--------------extra targets, Not needed to build LKL-----------------------
+Makefile:93:	$(call QUIET_CLEAN, objects)find $(OUTPUT) -name '*.o' -delete -o -name '\.*.cmd'\
+Makefile:94:	 -delete -o -name '\.*.d' -delete
+Makefile:95:	$(call QUIET_CLEAN, headers)$(RM) -r $(OUTPUT)/include/lkl/
+Makefile:99:clean-conf: clean
+Makefile:104:	    install -d $(DESTDIR)$(PREFIX)/include ; \
+Makefile:105:	    install -m 644 include/lkl.h include/lkl_host.h $(OUTPUT)include/lkl_autoconf.h \
+Makefile:107:	    cp -r $(OUTPUT)include/lkl $(DESTDIR)$(PREFIX)/include
+Makefile:109:libraries_install: $(libs-y:%=$(OUTPUT)%$(SOSUF))
+Makefile:111:	    install -d $(DESTDIR)$(PREFIX)/lib ; \
+Makefile:112:	    install -m 644 $^ $(DESTDIR)$(PREFIX)/lib
+Makefile:114:programs_install: $(progs-y:%=$(OUTPUT)%$(EXESUF))
+Makefile:116:	    install -d $(DESTDIR)$(PREFIX)/bin ; \
+Makefile:117:	    install -m 755 $^ $(DESTDIR)$(PREFIX)/bin
+Makefile:122:run-tests:
+Makefile:126:.PHONY: all clean FORCE run-tests
+Targets:1:libs-y += lib/liblkl
+Targets:4:libs-$(LKL_HOST_CONFIG_POSIX) += lib/hijack/liblkl-hijack
+Targets:6:LDFLAGS_lib/hijack/liblkl-hijack-y += -shared -nodefaultlibs
+Targets:7:LDLIBS_lib/hijack/liblkl-hijack-y += -ldl
+Targets:8:LDLIBS_lib/hijack/liblkl-hijack-$(LKL_HOST_CONFIG_ARM) += -lgcc -lc
+Targets:9:LDLIBS_lib/hijack/liblkl-hijack-$(LKL_HOST_CONFIG_AARCH64) += -lc
+Targets:10:LDLIBS_lib/hijack/liblkl-hijack-$(LKL_HOST_CONFIG_I386) += -lc_nonshared
+Targets:12:progs-$(LKL_HOST_CONFIG_FUSE) += lklfuse
+Targets:13:LDLIBS_lklfuse-y := -lfuse
+Targets:15:progs-$(LKL_HOST_CONFIG_ARCHIVE) += fs2tar
+Targets:16:LDLIBS_fs2tar-y := -larchive
+Targets:17:LDLIBS_fs2tar-$(LKL_HOST_CONFIG_NEEDS_LARGP) += -largp
+Targets:20:progs-$(LKL_HOST_CONFIG_ARCHIVE) += cptofs
+Targets:21:LDLIBS_cptofs-y := -larchive
+Targets:22:LDLIBS_cptofs-$(LKL_HOST_CONFIG_NEEDS_LARGP) += -largp
+Targets:24:progs-y += tests/boot
+Targets:25:progs-y += tests/disk
+Targets:26:progs-y += tests/disk-vfio-pci
+Targets:27:progs-y += tests/net-test
+lib/virtio.h:29:	 * enqueue - queues the request for processing
+lib/virtio.h:35:	 * @dev - virtio device
+lib/virtio.h:36:	 * @q	- queue index
+lib/virtio.h:80: * virtio_req_complete - complete a virtio request
+lib/virtio.h:82: * @req - the request to be completed
+lib/virtio.h:83: * @len - the total size in bytes of the completed request
+lib/virtio.h:90:	(type *)((char *)(ptr) - __builtin_offsetof(type, member))
+lib/virtio_net_fd.h:7: * lkl_register_netdev_linux_fdnet - register a file descriptor-based network
+lib/virtio_net_fd.h:10: * @fd_rx - a POSIX file descriptor number for input
+lib/virtio_net_fd.h:11: * @fd_tx - a POSIX file descriptor number for output
+lib/virtio_net_fd.h:12: * @returns a struct lkl_netdev_linux_fdnet entry for virtio-net
+lib/virtio_net_fd.h:18: * lkl_netdev_tap_init - initialize tap related structure fot lkl_netdev.
+lib/virtio_net_fd.h:20: * @path - the path to open the device.
+lib/virtio_net_fd.h:21: * @offload - offload bits for the device
+lib/virtio_net_fd.h:22: * @ifr - struct ifreq for ioctl.
+lib/config.c:12:#include "../../perf/pmu-events/jsmn.h"
+lib/config.c:16:	if (tok->type == JSMN_STRING &&
+lib/config.c:17:		(int) strlen(s) == tok->end - tok->start &&
+lib/config.c:18:		strncmp(json + tok->start, s, tok->end - tok->start) == 0) {
+lib/config.c:21:	return -1;
+lib/config.c:33:		return -1;
+lib/config.c:48:		return -1;
+lib/config.c:63:		return -1;
+lib/config.c:68:		return -1;
+lib/config.c:71:	cfg->ifnum = toks[pos].size;
+lib/config.c:73:	iface = cfg->ifaces;
+lib/config.c:75:	for (ifidx = 0; ifidx < cfg->ifnum; ifidx++) {
+lib/config.c:78:			return -1;
+lib/config.c:87:			prev->next = iface;
+lib/config.c:89:			cfg->ifaces = iface;
+lib/config.c:95:				return -1;
+lib/config.c:98:				cfgptr = &iface->iftype;
+lib/config.c:100:				cfgptr = &iface->ifparams;
+lib/config.c:102:				cfgptr = &iface->ifmtu_str;
+lib/config.c:104:				cfgptr = &iface->ifip;
+lib/config.c:106:				cfgptr = &iface->ifipv6;
+lib/config.c:108:				cfgptr = &iface->ifgateway;
+lib/config.c:111:				cfgptr = &iface->ifgateway6;
+lib/config.c:113:				cfgptr = &iface->ifmac_str;
+lib/config.c:115:				cfgptr = &iface->ifnetmask_len;
+lib/config.c:117:				cfgptr = &iface->ifnetmask6_len;
+lib/config.c:119:				cfgptr = &iface->ifneigh_entries;
+lib/config.c:121:				cfgptr = &iface->ifqdisc_entries;
+lib/config.c:123:				cfgptr = &iface->ifoffload_str;
+lib/config.c:126:						toks[pos].end-toks[pos].start,
+lib/config.c:128:				return -1;
+lib/config.c:131:					toks[pos+1].end-toks[pos+1].start);
+lib/config.c:136:	return pos - startpos;
+lib/config.c:149:		return -1;
+lib/config.c:154:		return -1;
+lib/config.c:158:		return -1;
+lib/config.c:163:			return -1;
+lib/config.c:170:			pos--;
+lib/config.c:174:			cfgptr = &cfg->gateway;
+lib/config.c:176:			cfgptr = &cfg->gateway6;
+lib/config.c:178:			cfgptr = &cfg->debug;
+lib/config.c:180:			cfgptr = &cfg->mount;
+lib/config.c:182:			cfgptr = &cfg->single_cpu;
+lib/config.c:184:			cfgptr = &cfg->sysctls;
+lib/config.c:186:			cfgptr = &cfg->boot_cmdline;
+lib/config.c:188:			cfgptr = &cfg->dump;
+lib/config.c:190:			cfgptr = &cfg->delay_main;
+lib/config.c:193:					toks[pos].end-toks[pos].start,
+lib/config.c:195:			return -1;
+lib/config.c:199:				toks[pos].end-toks[pos].start);
+lib/config.c:213:	lkl_printf("gateway: %s\n", cfg->gateway);
+lib/config.c:214:	lkl_printf("gateway6: %s\n", cfg->gateway6);
+lib/config.c:215:	lkl_printf("debug: %s\n", cfg->debug);
+lib/config.c:216:	lkl_printf("mount: %s\n", cfg->mount);
+lib/config.c:217:	lkl_printf("singlecpu: %s\n", cfg->single_cpu);
+lib/config.c:218:	lkl_printf("sysctl: %s\n", cfg->sysctls);
+lib/config.c:219:	lkl_printf("cmdline: %s\n", cfg->boot_cmdline);
+lib/config.c:220:	lkl_printf("dump: %s\n", cfg->dump);
+lib/config.c:221:	lkl_printf("delay: %s\n", cfg->delay_main);
+lib/config.c:223:	for (iface = cfg->ifaces; iface; iface = iface->next, i++) {
+lib/config.c:224:		lkl_printf("ifmac[%d] = %s\n", i, iface->ifmac_str);
+lib/config.c:225:		lkl_printf("ifmtu[%d] = %s\n", i, iface->ifmtu_str);
+lib/config.c:226:		lkl_printf("iftype[%d] = %s\n", i, iface->iftype);
+lib/config.c:227:		lkl_printf("ifparam[%d] = %s\n", i, iface->ifparams);
+lib/config.c:228:		lkl_printf("ifip[%d] = %s\n", i, iface->ifip);
+lib/config.c:229:		lkl_printf("ifmasklen[%d] = %s\n", i, iface->ifnetmask_len);
+lib/config.c:230:		lkl_printf("ifgateway[%d] = %s\n", i, iface->ifgateway);
+lib/config.c:231:		lkl_printf("ifip6[%d] = %s\n", i, iface->ifipv6);
+lib/config.c:232:		lkl_printf("ifmasklen6[%d] = %s\n", i, iface->ifnetmask6_len);
+lib/config.c:233:		lkl_printf("ifgateway6[%d] = %s\n", i, iface->ifgateway6);
+lib/config.c:234:		lkl_printf("ifoffload[%d] = %s\n", i, iface->ifoffload_str);
+lib/config.c:235:		lkl_printf("ifneigh[%d] = %s\n", i, iface->ifneigh_entries);
+lib/config.c:236:		lkl_printf("ifqdisk[%d] = %s\n", i, iface->ifqdisc_entries);
+lib/config.c:268:		return -1;
+lib/config.c:270:		cfg->ifnum = 1;
+lib/config.c:275:	ret = cfgcpy(&iface->iftap, envtap);
+lib/config.c:278:	ret = cfgcpy(&iface->iftype, enviftype);
+lib/config.c:281:	ret = cfgcpy(&iface->ifparams, envifparams);
+lib/config.c:284:	ret = cfgcpy(&iface->ifmtu_str, envmtu_str);
+lib/config.c:287:	ret = cfgcpy(&iface->ifip, envip);
+lib/config.c:290:	ret = cfgcpy(&iface->ifipv6, envipv6);
+lib/config.c:293:	ret = cfgcpy(&iface->ifgateway, envifgateway);
+lib/config.c:296:	ret = cfgcpy(&iface->ifgateway6, envifgateway6);
+lib/config.c:299:	ret = cfgcpy(&iface->ifmac_str, envmac_str);
+lib/config.c:302:	ret = cfgcpy(&iface->ifnetmask_len, envnetmask_len);
+lib/config.c:305:	ret = cfgcpy(&iface->ifnetmask6_len, envnetmask6_len);
+lib/config.c:308:	ret = cfgcpy(&iface->ifoffload_str, envoffload_str);
+lib/config.c:311:	ret = cfgcpy(&iface->ifneigh_entries, envneigh_entries);
+lib/config.c:314:	ret = cfgcpy(&iface->ifqdisc_entries, envqdisc_entries);
+lib/config.c:317:	ret = cfgcpy(&cfg->gateway, envgateway);
+lib/config.c:320:	ret = cfgcpy(&cfg->gateway6, envgateway6);
+lib/config.c:323:	ret = cfgcpy(&cfg->debug, envdebug);
+lib/config.c:326:	ret = cfgcpy(&cfg->mount, envmount);
+lib/config.c:329:	ret = cfgcpy(&cfg->single_cpu, envsingle_cpu);
+lib/config.c:332:	ret = cfgcpy(&cfg->sysctls, envsysctls);
+lib/config.c:335:	ret = cfgcpy(&cfg->boot_cmdline, envboot_cmdline);
+lib/config.c:338:	ret = cfgcpy(&cfg->dump, envdump);
+lib/config.c:357:			return -1;
+lib/config.c:366:		return -1;
+lib/config.c:419:	int ret = -1, bytes_read = 0;
+lib/config.c:428:		return -1;
+lib/config.c:433:	while ((ret = lkl_sys_read(fd, str, sizeof(str) - 1)) > 0)
+lib/config.c:440:		return -1;
+lib/config.c:473:	if (iface->ifoffload_str)
+lib/config.c:474:		offload = strtol(iface->ifoffload_str, NULL, 0);
+lib/config.c:477:	if (iface->iftap) {
+lib/config.c:480:		nd = lkl_netdev_tap_create(iface->iftap, offload);
+lib/config.c:483:	if (!nd && iface->iftype && iface->ifparams) {
+lib/config.c:484:		if ((strcmp(iface->iftype, "tap") == 0)) {
+lib/config.c:485:			nd = lkl_netdev_tap_create(iface->ifparams, offload);
+lib/config.c:486:		} else if ((strcmp(iface->iftype, "macvtap") == 0)) {
+lib/config.c:487:			nd = lkl_netdev_macvtap_create(iface->ifparams,
+lib/config.c:489:		} else if ((strcmp(iface->iftype, "dpdk") == 0)) {
+lib/config.c:490:			nd = lkl_netdev_dpdk_create(iface->ifparams, offload,
+lib/config.c:492:		} else if ((strcmp(iface->iftype, "pipe") == 0)) {
+lib/config.c:493:			nd = lkl_netdev_pipe_create(iface->ifparams, offload);
+lib/config.c:498:					   iface->iftype);
+lib/config.c:504:		if (strcmp(iface->iftype, "vde") == 0)
+lib/config.c:505:			nd = lkl_netdev_vde_create(iface->ifparams);
+lib/config.c:506:		if (strcmp(iface->iftype, "raw") == 0)
+lib/config.c:507:			nd = lkl_netdev_raw_create(iface->ifparams);
+lib/config.c:516:			ret = parse_mac_str(iface->ifmac_str, mac);
+lib/config.c:520:				return -1;
+lib/config.c:533:			return -1;
+lib/config.c:535:		nd->id = ret;
+lib/config.c:536:		iface->nd = nd;
+lib/config.c:544:	int ret, nd_ifindex = -1;
+lib/config.c:545:	struct lkl_netdev *nd = iface->nd;
+lib/config.c:548:		lkl_printf("no netdev available %s\n", iface ? iface->ifparams
+lib/config.c:550:		return -1;
+lib/config.c:553:	if (nd->id >= 0) {
+lib/config.c:554:		nd_ifindex = lkl_netdev_get_ifindex(nd->id);
+lib/config.c:560:				nd->id, lkl_strerror(nd_ifindex));
+lib/config.c:563:	if (nd_ifindex >= 0 && iface->ifmtu_str) {
+lib/config.c:564:		int mtu = atoi(iface->ifmtu_str);
+lib/config.c:572:	if (nd_ifindex >= 0 && iface->ifip && iface->ifnetmask_len) {
+lib/config.c:575:		if (inet_pton(LKL_AF_INET, iface->ifip,
+lib/config.c:577:			lkl_printf("Invalid ipv4 address: %s\n", iface->ifip);
+lib/config.c:579:		int nmlen = atoi(iface->ifnetmask_len);
+lib/config.c:587:		if (iface->ifgateway) {
+lib/config.c:590:			if (inet_pton(LKL_AF_INET, iface->ifgateway,
+lib/config.c:593:					   iface->ifgateway);
+lib/config.c:606:	if (nd_ifindex >= 0 && iface->ifipv6 &&
+lib/config.c:607:			iface->ifnetmask6_len) {
+lib/config.c:609:		unsigned int pflen = atoi(iface->ifnetmask6_len);
+lib/config.c:611:		if (inet_pton(LKL_AF_INET6, iface->ifipv6,
+lib/config.c:614:				   iface->ifipv6);
+lib/config.c:621:		if (iface->ifgateway6) {
+lib/config.c:624:			if (inet_pton(LKL_AF_INET6, iface->ifgateway6,
+lib/config.c:627:					   iface->ifgateway6);
+lib/config.c:639:	if (nd_ifindex >= 0 && iface->ifneigh_entries)
+lib/config.c:640:		add_neighbor(nd_ifindex, iface->ifneigh_entries);
+lib/config.c:642:	if (nd_ifindex >= 0 && iface->ifqdisc_entries)
+lib/config.c:643:		lkl_qdisc_parse_add(nd_ifindex, iface->ifqdisc_entries);
+lib/config.c:659:		return -1;
+lib/config.c:661:	for (iface = cfg->ifaces; iface; iface = iface->next) {
+lib/config.c:662:		free_cfgparam(iface->iftap);
+lib/config.c:663:		free_cfgparam(iface->iftype);
+lib/config.c:664:		free_cfgparam(iface->ifparams);
+lib/config.c:665:		free_cfgparam(iface->ifmtu_str);
+lib/config.c:666:		free_cfgparam(iface->ifip);
+lib/config.c:667:		free_cfgparam(iface->ifipv6);
+lib/config.c:668:		free_cfgparam(iface->ifgateway);
+lib/config.c:669:		free_cfgparam(iface->ifgateway6);
+lib/config.c:670:		free_cfgparam(iface->ifmac_str);
+lib/config.c:671:		free_cfgparam(iface->ifnetmask_len);
+lib/config.c:672:		free_cfgparam(iface->ifnetmask6_len);
+lib/config.c:673:		free_cfgparam(iface->ifoffload_str);
+lib/config.c:674:		free_cfgparam(iface->ifneigh_entries);
+lib/config.c:675:		free_cfgparam(iface->ifqdisc_entries);
+lib/config.c:677:	free_cfgparam(cfg->gateway);
+lib/config.c:678:	free_cfgparam(cfg->gateway6);
+lib/config.c:679:	free_cfgparam(cfg->debug);
+lib/config.c:680:	free_cfgparam(cfg->mount);
+lib/config.c:681:	free_cfgparam(cfg->single_cpu);
+lib/config.c:682:	free_cfgparam(cfg->sysctls);
+lib/config.c:683:	free_cfgparam(cfg->boot_cmdline);
+lib/config.c:684:	free_cfgparam(cfg->dump);
+lib/config.c:685:	free_cfgparam(cfg->delay_main);
+lib/config.c:698:	if (cfg->debug)
+lib/config.c:699:		lkl_debug = strtol(cfg->debug, NULL, 0);
+lib/config.c:701:	if (!cfg->debug || (lkl_debug == 0))
+lib/config.c:704:	for (iface = cfg->ifaces; iface; iface = iface->next) {
+lib/config.c:707:			return -1;
+lib/config.c:721:	if (cfg->mount)
+lib/config.c:722:		mount_cmds_exec(cfg->mount, lkl_mount_fs);
+lib/config.c:724:	for (iface = cfg->ifaces; iface; iface = iface->next) {
+lib/config.c:730:	if (cfg->gateway) {
+lib/config.c:733:		if (inet_pton(LKL_AF_INET, cfg->gateway,
+lib/config.c:735:			lkl_printf("Invalid ipv4 gateway: %s\n", cfg->gateway);
+lib/config.c:745:	if (cfg->gateway6) {
+lib/config.c:748:		if (inet_pton(LKL_AF_INET6, cfg->gateway6, gw) != 1) {
+lib/config.c:749:			lkl_printf("Invalid ipv6 gateway: %s\n", cfg->gateway6);
+lib/config.c:758:	if (cfg->sysctls)
+lib/config.c:759:		lkl_sysctl_parse_write(cfg->sysctls);
+lib/config.c:762:	if (cfg->delay_main) {
+lib/config.c:763:		unsigned long delay = strtoul(cfg->delay_main, NULL, 10);
+lib/config.c:767:				   cfg->delay_main);
+lib/config.c:782:		if (cfg->dump)
+lib/config.c:783:			mount_cmds_exec(cfg->dump, dump_file);
+lib/config.c:785:		for (iface = cfg->ifaces; iface; iface = iface->next) {
+lib/config.c:786:			if (iface->nd) {
+lib/config.c:787:				if (iface->nd->id >= 0)
+lib/config.c:788:					lkl_netdev_remove(iface->nd->id);
+lib/config.c:789:				lkl_netdev_free(iface->nd);
+lib/iomem.c:13:	(((uintptr_t)addr) & ((1 << IOMEM_OFFSET_BITS) - 1))
+lib/iomem.c:27:	if (size > (1 << IOMEM_OFFSET_BITS) - 1)
+lib/iomem.c:64:	if (iomem->ops && size <= iomem->size)
+lib/iomem.c:79:		return -1;
+lib/iomem.c:82:		ret = iomem->ops->write(iomem->data, offset, res, size);
+lib/iomem.c:84:		ret = iomem->ops->read(iomem->data, offset, res, size);
+lib/virtio_net_tap.c:9: * Current implementation is linux-specific.
+lib/virtio_net_tap.c:49:		ifr->ifr_flags |= IFF_VNET_HDR;
+lib/virtio_net_tap.c:87:	nd->has_vnet_hdr = (vnet_hdr_sz != 0);
+lib/jmp_buf.c:6:	if (!setjmp(*((jmp_buf *)jmpb->buf)))
+lib/jmp_buf.c:12:	longjmp(*((jmp_buf *)jmpb->buf), val);
+lib/virtio_net_dpdk.c:26:	"-c 1",
+lib/virtio_net_dpdk.c:27:	"-n 1",
+lib/virtio_net_dpdk.c:28:	"--log-level=0",
+lib/virtio_net_dpdk.c:32:/* XXX: disable cache due to no thread-safe on mempool cache. */
+lib/virtio_net_dpdk.c:36:	- (sizeof(struct rte_mbuf) + RTE_PKTMBUF_HEADROOM))
+lib/virtio_net_dpdk.c:67:	lkl_printf("dpdk-tx: gso_type=%d, gso=%d, hdrlen=%d validation=%d\n",
+lib/virtio_net_dpdk.c:68:		header->gso_type, header->gso_size, header->hdr_len,
+lib/virtio_net_dpdk.c:73:	rm->l2_len = hdr_lens.l2_len;
+lib/virtio_net_dpdk.c:74:	rm->l3_len = hdr_lens.l3_len;
+lib/virtio_net_dpdk.c:75:	rm->l4_len = hdr_lens.l4_len; // including tcp opts
+lib/virtio_net_dpdk.c:79:			rm->ol_flags = PKT_TX_IPV4;
+lib/virtio_net_dpdk.c:81:			rm->ol_flags = PKT_TX_IPV6;
+lib/virtio_net_dpdk.c:83:		rm->ol_flags |= PKT_TX_TCP_CKSUM;
+lib/virtio_net_dpdk.c:84:		rm->tso_segsz = header->gso_size;
+lib/virtio_net_dpdk.c:86:		if (header->gso_type == LKL_VIRTIO_NET_HDR_GSO_TCPV4)
+lib/virtio_net_dpdk.c:87:			rm->ol_flags |= (PKT_TX_TCP_SEG | PKT_TX_IP_CKSUM);
+lib/virtio_net_dpdk.c:88:		else if (header->gso_type == LKL_VIRTIO_NET_HDR_GSO_TCPV6)
+lib/virtio_net_dpdk.c:89:			rm->ol_flags |= PKT_TX_TCP_SEG;
+lib/virtio_net_dpdk.c:109:	 * safe (e.g., http://www.dpdk.io/ml/archives/dev/2014-February/001401.html),
+lib/virtio_net_dpdk.c:114:	rm = rte_pktmbuf_alloc(nd_dpdk->txpool);
+lib/virtio_net_dpdk.c:123:			len -= sizeof(*header);
+lib/virtio_net_dpdk.c:135:			lkl_printf("dpdk-tx: failed to append: idx=%d len=%d\n",
+lib/virtio_net_dpdk.c:138:			return -1;
+lib/virtio_net_dpdk.c:141:		lkl_printf("dpdk-tx: pkt[%d]len=%d\n", i, len);
+lib/virtio_net_dpdk.c:148:	/* XXX: should be bulk-trasmitted !! */
+lib/virtio_net_dpdk.c:149:	if (rte_eth_tx_prepare(nd_dpdk->portid, 0, &rm, 1) != 1)
+lib/virtio_net_dpdk.c:152:	rte_eth_tx_burst(nd_dpdk->portid, 0, &rm, 1);
+lib/virtio_net_dpdk.c:171:	first = nd_dpdk->rcv_mbuf[nd_dpdk->bufidx];
+lib/virtio_net_dpdk.c:173:	for (rm = nd_dpdk->rcv_mbuf[nd_dpdk->bufidx]; rm; rm = rm->next) {
+lib/virtio_net_dpdk.c:178:		lkl_printf("dpdk-rx: mbuf pktlen=%d orig_len=%lu\n",
+lib/virtio_net_dpdk.c:182:		if (nd_dpdk->offload & BIT(LKL_VIRTIO_NET_F_MRG_RXBUF) &&
+lib/virtio_net_dpdk.c:185:		else if (nd_dpdk->offload & BIT(LKL_VIRTIO_NET_F_GUEST_TSO4) &&
+lib/virtio_net_dpdk.c:195:					"dpdk-rx: buffer full. skip it. ");
+lib/virtio_net_dpdk.c:202:			copylen = r_size < (iov[i].iov_len - offset) ? r_size
+lib/virtio_net_dpdk.c:203:				: iov[i].iov_len - offset;
+lib/virtio_net_dpdk.c:206:			r_size -= copylen;
+lib/virtio_net_dpdk.c:214:	header->flags = LKL_VIRTIO_NET_HDR_F_DATA_VALID;
+lib/virtio_net_dpdk.c:215:	rte_eth_dev_get_mtu(nd_dpdk->portid, &mtu);
+lib/virtio_net_dpdk.c:226:			    nd_dpdk->offload & BIT(LKL_VIRTIO_NET_F_GUEST_TSO4))
+lib/virtio_net_dpdk.c:227:				header->gso_type = LKL_VIRTIO_NET_HDR_GSO_TCPV4;
+lib/virtio_net_dpdk.c:232:			    nd_dpdk->offload & BIT(LKL_VIRTIO_NET_F_GUEST_TSO6))
+lib/virtio_net_dpdk.c:233:				header->gso_type = LKL_VIRTIO_NET_HDR_GSO_TCPV6;
+lib/virtio_net_dpdk.c:236:		header->gso_size = mtu - hdr_lens.l3_len - hdr_lens.l4_len;
+lib/virtio_net_dpdk.c:237:		header->hdr_len = hdr_lens.l2_len + hdr_lens.l3_len
+lib/virtio_net_dpdk.c:244:	lkl_printf("dpdk-rx: len=%d mtu=%d type=%d, size=%d, hdrlen=%d\n",
+lib/virtio_net_dpdk.c:245:		   read, mtu, header->gso_type,
+lib/virtio_net_dpdk.c:246:		   header->gso_size, header->hdr_len);
+lib/virtio_net_dpdk.c:254: * this function is not thread-safe.
+lib/virtio_net_dpdk.c:256: * nd_dpdk->rcv_mbuf is specifically not safe in parallel access.  if future
+lib/virtio_net_dpdk.c:257: * refactor allows us to read in parallel, the buffer (nd_dpdk->rcv_mbuf) shall
+lib/virtio_net_dpdk.c:267:	if (nd_dpdk->npkts == 0) {
+lib/virtio_net_dpdk.c:268:		nd_dpdk->npkts = rte_eth_rx_burst(nd_dpdk->portid, 0,
+lib/virtio_net_dpdk.c:269:						  nd_dpdk->rcv_mbuf,
+lib/virtio_net_dpdk.c:271:		if (nd_dpdk->npkts <= 0) {
+lib/virtio_net_dpdk.c:276:			if (!nd_dpdk->busy_poll)
+lib/virtio_net_dpdk.c:278:			return -1;
+lib/virtio_net_dpdk.c:280:		nd_dpdk->bufidx = 0;
+lib/virtio_net_dpdk.c:286:	rte_pktmbuf_free(nd_dpdk->rcv_mbuf[nd_dpdk->bufidx]);
+lib/virtio_net_dpdk.c:288:	nd_dpdk->bufidx++;
+lib/virtio_net_dpdk.c:289:	nd_dpdk->npkts--;
+lib/virtio_net_dpdk.c:299:	if (nd_dpdk->close)
+lib/virtio_net_dpdk.c:315:	nd_dpdk->close = 1;
+lib/virtio_net_dpdk.c:352:			ealargs[3] = "--log-level=100";
+lib/virtio_net_dpdk.c:364:	nd->dev.ops = &dpdk_net_ops;
+lib/virtio_net_dpdk.c:365:	nd->portid = portid++;
+lib/virtio_net_dpdk.c:366:	/* busy-poll mode is described 'ifparams' with "*-busy" */
+lib/virtio_net_dpdk.c:367:	nd->busy_poll = strstr(ifparams, "busy") ? 1 : 0;
+lib/virtio_net_dpdk.c:369:	nd->offload = offload;
+lib/virtio_net_dpdk.c:371:	snprintf(poolname, RTE_MEMZONE_NAMESIZE, "%s%s", "tx-", ifparams);
+lib/virtio_net_dpdk.c:372:	nd->txpool =
+lib/virtio_net_dpdk.c:379:	if (!nd->txpool) {
+lib/virtio_net_dpdk.c:386:	snprintf(poolname, RTE_MEMZONE_NAMESIZE, "%s%s", "rx-", ifparams);
+lib/virtio_net_dpdk.c:387:	nd->rxpool =
+lib/virtio_net_dpdk.c:392:	if (!nd->rxpool) {
+lib/virtio_net_dpdk.c:409:	ret = rte_eth_dev_configure(nd->portid, NUMQUEUE, NUMQUEUE,
+lib/virtio_net_dpdk.c:417:	rte_eth_dev_info_get(nd->portid, &dev_info);
+lib/virtio_net_dpdk.c:419:	ret = rte_eth_rx_queue_setup(nd->portid, 0, NUMDESC, 0,
+lib/virtio_net_dpdk.c:420:				     &dev_info.default_rxconf, nd->rxpool);
+lib/virtio_net_dpdk.c:433:	ret = rte_eth_tx_queue_setup(nd->portid, 0, NUMDESC, 0,
+lib/virtio_net_dpdk.c:441:	ret = rte_eth_dev_start(nd->portid);
+lib/virtio_net_dpdk.c:452:		rte_eth_macaddr_get(nd->portid, (struct ether_addr *)mac);
+lib/virtio_net_dpdk.c:454:			   nd->portid,
+lib/virtio_net_dpdk.c:458:	rte_eth_dev_set_link_up(nd->portid);
+lib/virtio_net_dpdk.c:460:	rte_eth_link_get(nd->portid, &link);
+lib/virtio_net_dpdk.c:463:		rte_eth_link_get(nd->portid, &link);
+lib/virtio_net_dpdk.c:473:	rte_eth_promiscuous_enable(nd->portid);
+lib/virtio_net_dpdk.c:476:	nd->dev.has_vnet_hdr = 1;
+lib/virtio_net.c:41:	if (dev->driver_features == dev->device_features)
+lib/virtio_net.c:44:	return -LKL_EINVAL;
+lib/virtio_net.c:49:	lkl_host_ops.mutex_lock(netdev_of(dev)->queue_locks[queue_idx]);
+lib/virtio_net.c:54:	lkl_host_ops.mutex_unlock(netdev_of(dev)->queue_locks[queue_idx]);
+lib/virtio_net.c:69:	header = req->buf[0].iov_base;
+lib/virtio_net.c:73:	 * accordingly. (We make adjustment to req->buf so it can be used
+lib/virtio_net.c:78:	if (!net_dev->nd->has_vnet_hdr) {
+lib/virtio_net.c:79:		req->buf[0].iov_base += sizeof(*header);
+lib/virtio_net.c:80:		req->buf[0].iov_len -= sizeof(*header);
+lib/virtio_net.c:82:	iov = req->buf;
+lib/virtio_net.c:86:		ret = net_dev->nd->ops->tx(net_dev->nd, iov, req->buf_count);
+lib/virtio_net.c:88:			return -1;
+lib/virtio_net.c:92:		ret = net_dev->nd->ops->rx(net_dev->nd, iov, req->buf_count);
+lib/virtio_net.c:94:			return -1;
+lib/virtio_net.c:95:		if (net_dev->nd->has_vnet_hdr) {
+lib/virtio_net.c:103:			if (req->total_len == (unsigned int)ret)
+lib/virtio_net.c:107:			header->flags = 0;
+lib/virtio_net.c:108:			header->gso_type = LKL_VIRTIO_NET_HDR_GSO_NONE;
+lib/virtio_net.c:116:			len -= req->buf[i].iov_len;
+lib/virtio_net.c:117:		header->num_buffers = i;
+lib/virtio_net.c:119:		if (dev->device_features & BIT(LKL_VIRTIO_NET_F_GUEST_CSUM))
+lib/virtio_net.c:120:			header->flags |= LKL_VIRTIO_NET_HDR_F_DATA_VALID;
+lib/virtio_net.c:122:		bad_request("tried to push on non-existent queue");
+lib/virtio_net.c:123:		return -1;
+lib/virtio_net.c:125:	if (!net_dev->nd->has_vnet_hdr) {
+lib/virtio_net.c:127:		req->buf[0].iov_base -= sizeof(*header);
+lib/virtio_net.c:128:		req->buf[0].iov_len += sizeof(*header);
+lib/virtio_net.c:148:		int ret = dev->nd->ops->poll(dev->nd);
+lib/virtio_net.c:157:			virtio_process_queue(&dev->dev, 0);
+lib/virtio_net.c:159:			virtio_process_queue(&dev->dev, 1);
+lib/virtio_net.c:171:		return -LKL_ENOMEM;
+lib/virtio_net.c:214:	int ret = -LKL_ENOMEM;
+lib/virtio_net.c:218:		return -LKL_ENOMEM;
+lib/virtio_net.c:222:	dev->dev.device_id = LKL_VIRTIO_ID_NET;
+lib/virtio_net.c:224:		if (args->mac) {
+lib/virtio_net.c:225:			dev->dev.device_features |= BIT(LKL_VIRTIO_NET_F_MAC);
+lib/virtio_net.c:226:			memcpy(dev->config.mac, args->mac, LKL_ETH_ALEN);
+lib/virtio_net.c:228:		dev->dev.device_features |= args->offload;
+lib/virtio_net.c:231:	dev->dev.config_data = &dev->config;
+lib/virtio_net.c:232:	dev->dev.config_len = sizeof(dev->config);
+lib/virtio_net.c:233:	dev->dev.ops = &net_ops;
+lib/virtio_net.c:234:	dev->nd = nd;
+lib/virtio_net.c:235:	dev->queue_locks = init_queue_locks(NUM_QUEUES);
+lib/virtio_net.c:237:	if (!dev->queue_locks)
+lib/virtio_net.c:246:	ret = virtio_dev_setup(&dev->dev, NUM_QUEUES, QUEUE_DEPTH);
+lib/virtio_net.c:255:	if (dev->dev.device_features & BIT(LKL_VIRTIO_NET_F_MRG_RXBUF))
+lib/virtio_net.c:256:		virtio_set_queue_max_merge_len(&dev->dev, RX_QUEUE_IDX, 65536);
+lib/virtio_net.c:258:	dev->poll_tid = lkl_host_ops.thread_create(poll_thread, dev);
+lib/virtio_net.c:259:	if (dev->poll_tid == 0)
+lib/virtio_net.c:269:	virtio_dev_cleanup(&dev->dev);
+lib/virtio_net.c:272:	if (dev->queue_locks)
+lib/virtio_net.c:273:		free_queue_locks(dev->queue_locks, NUM_QUEUES);
+lib/virtio_net.c:279:/* Return 0 for success, -1 for failure. */
+lib/virtio_net.c:292:	dev->nd->ops->poll_hup(dev->nd);
+lib/virtio_net.c:293:	lkl_host_ops.thread_join(dev->poll_tid);
+lib/virtio_net.c:309:	virtio_dev_cleanup(&dev->dev);
+lib/virtio_net.c:311:	free_queue_locks(dev->queue_locks, NUM_QUEUES);
+lib/virtio_net.c:317:	nd->ops->free(nd);
+lib/utils.c:25:	"Cross-device link",
+lib/utils.c:37:	"Read-only file system",
+lib/utils.c:95:	"Socket operation on non-socket",
+lib/utils.c:139:	"Operation not possible due to RF-kill",
+lib/utils.c:146:		err = -err;
+lib/utils.c:177:		return -1;
+lib/utils.c:231:		return -1;
+lib/utils.c:266:    return -1;
+lib/posix-host.c:83:	if (sem_init(&sem->sem, SHARE_SEM, count) < 0) {
+lib/posix-host.c:89:	pthread_mutex_init(&sem->lock, NULL);
+lib/posix-host.c:90:	sem->count = count;
+lib/posix-host.c:91:	WARN_PTHREAD(pthread_cond_init(&sem->cond, NULL));
+lib/posix-host.c:100:	WARN_UNLESS(sem_destroy(&sem->sem));
+lib/posix-host.c:102:	WARN_PTHREAD(pthread_cond_destroy(&sem->cond));
+lib/posix-host.c:103:	WARN_PTHREAD(pthread_mutex_destroy(&sem->lock));
+lib/posix-host.c:111:	WARN_UNLESS(sem_post(&sem->sem));
+lib/posix-host.c:113:	WARN_PTHREAD(pthread_mutex_lock(&sem->lock));
+lib/posix-host.c:114:	sem->count++;
+lib/posix-host.c:115:	if (sem->count > 0)
+lib/posix-host.c:116:		WARN_PTHREAD(pthread_cond_signal(&sem->cond));
+lib/posix-host.c:117:	WARN_PTHREAD(pthread_mutex_unlock(&sem->lock));
+lib/posix-host.c:128:		err = sem_wait(&sem->sem);
+lib/posix-host.c:133:	WARN_PTHREAD(pthread_mutex_lock(&sem->lock));
+lib/posix-host.c:134:	while (sem->count <= 0)
+lib/posix-host.c:135:		WARN_PTHREAD(pthread_cond_wait(&sem->cond, &sem->lock));
+lib/posix-host.c:136:	sem->count--;
+lib/posix-host.c:137:	WARN_PTHREAD(pthread_mutex_unlock(&sem->lock));
+lib/posix-host.c:150:	mutex = &_mutex->mutex;
+lib/posix-host.c:171:	WARN_PTHREAD(pthread_mutex_lock(&mutex->mutex));
+lib/posix-host.c:176:	pthread_mutex_t *mutex = &_mutex->mutex;
+lib/posix-host.c:182:	pthread_mutex_t *mutex = &_mutex->mutex;
+lib/posix-host.c:209:		return -1;
+lib/posix-host.c:228:	if (WARN_PTHREAD(pthread_key_create(&ret->key, destructor))) {
+lib/posix-host.c:237:	WARN_PTHREAD(pthread_key_delete(key->key));
+lib/posix-host.c:243:	if (WARN_PTHREAD(pthread_setspecific(key->key, data)))
+lib/posix-host.c:244:		return -1;
+lib/posix-host.c:250:	return pthread_getspecific(key->key);
+lib/posix-host.c:320:		     MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+lib/posix-host.c:384:		return -1;
+lib/posix-host.c:392:	off_t off = req->sector * 512;
+lib/posix-host.c:398:	for (i = 0; i < req->count; i++) {
+lib/posix-host.c:400:		addr = req->buf[i].iov_base;
+lib/posix-host.c:401:		len = req->buf[i].iov_len;
+lib/posix-host.c:407:				ret = -1;
+lib/posix-host.c:412:			len -= ret;
+lib/posix-host.c:426:	switch (req->type) {
+lib/fs.c:19:	if (ret && ret != -LKL_EEXIST) {
+lib/fs.c:26:	if (ret && ret != -LKL_EBUSY) {
+lib/fs.c:31:	if (ret == -LKL_EBUSY)
+lib/fs.c:57:	ret = -LKL_ENOENT;
+lib/fs.c:60:		if (startswith(dirent->d_name, prefix)) {
+lib/fs.c:61:			if (strlen(dirent->d_name) + 1 > result_len) {
+lib/fs.c:62:				ret = -LKL_ENOMEM;
+lib/fs.c:65:			memcpy(result, dirent->d_name, strlen(dirent->d_name));
+lib/fs.c:66:			result[strlen(dirent->d_name)] = '\0';
+lib/fs.c:94:		ret = -LKL_ENOBUFS;
+lib/fs.c:100:		ret = -LKL_EINVAL;
+lib/fs.c:119:	"/sysfs/devices/platform/virtio-mmio.%d.auto"
+lib/fs.c:121:	"/sysfs/devices/virtio-mmio-cmdline/virtio-mmio.%d"
+lib/fs.c:133:	if (!buf->ptr)
+lib/fs.c:134:		buf->ptr = buf->mem;
+lib/fs.c:137:	ret = vsnprintf(buf->ptr, buf->len - (buf->ptr - buf->mem), fmt, args);
+lib/fs.c:140:	if (ret < 0 || (ret >= (buf->len - (buf->ptr - buf->mem))))
+lib/fs.c:141:		return -LKL_ENOMEM;
+lib/fs.c:143:	buf->ptr += ret;
+lib/fs.c:161:		return -LKL_EINVAL;
+lib/fs.c:169:		disk_id -= virtio_get_num_bootdevs();
+lib/fs.c:211:		return -LKL_ENOMEM;
+lib/fs.c:218:		if (err == -LKL_ENOENT)
+lib/fs.c:230:		if (err == -LKL_ENOENT)
+lib/fs.c:245:		_data[sizeof(_data) - 1] = 0;
+lib/fs.c:286:		if (err == -LKL_EBUSY) {
+lib/fs.c:289:			timeout_ms -= incr / 1000000;
+lib/fs.c:291:	} while (err == -LKL_EBUSY && timeout_ms > 0);
+lib/fs.c:341:		*err = -LKL_ENOMEM;
+lib/fs.c:345:	dir->len = 0;
+lib/fs.c:346:	dir->pos = NULL;
+lib/fs.c:356:		*err = -LKL_ENOMEM;
+lib/fs.c:360:	dir->fd = lkl_sys_open(path, LKL_O_RDONLY | LKL_O_DIRECTORY, 0);
+lib/fs.c:361:	if (dir->fd < 0) {
+lib/fs.c:362:		*err = dir->fd;
+lib/fs.c:379:	dir->fd = fd;
+lib/fs.c:386:	lkl_sys_lseek(dir->fd, 0, LKL_SEEK_SET);
+lib/fs.c:387:	dir->len = 0;
+lib/fs.c:388:	dir->pos = NULL;
+lib/fs.c:395:	ret = lkl_sys_close(dir->fd);
+lib/fs.c:405:	if (dir->len < 0)
+lib/fs.c:408:	if (!dir->pos || dir->pos - dir->buf >= dir->len)
+lib/fs.c:412:	de = (struct lkl_linux_dirent64 *)dir->pos;
+lib/fs.c:413:	dir->pos += de->d_reclen;
+lib/fs.c:418:	dir->pos = NULL;
+lib/fs.c:419:	de = (struct lkl_linux_dirent64 *)dir->buf;
+lib/fs.c:420:	dir->len = lkl_sys_getdents64(dir->fd, de, sizeof(dir->buf));
+lib/fs.c:421:	if (dir->len <= 0)
+lib/fs.c:424:	dir->pos = dir->buf;
+lib/fs.c:430:	if (dir->len >= 0)
+lib/fs.c:433:	return dir->len;
+lib/fs.c:438:	return dir->fd;
+lib/Build:1:CFLAGS_posix-host.o += -D_FILE_OFFSET_BITS=64
+lib/Build:2:CFLAGS_dce_host.o += -D_FILE_OFFSET_BITS=64
+lib/Build:3:CFLAGS_virtio_net_vde.o += $(pkg-config --cflags vdeplug 2>/dev/null)
+lib/Build:4:CFLAGS_nt-host.o += -D_WIN32_WINNT=0x0600
+lib/Build:6:liblkl-y += fs.o
+lib/Build:7:liblkl-y += iomem.o
+lib/Build:8:liblkl-y += net.o
+lib/Build:9:liblkl-y += jmp_buf.o
+lib/Build:10:liblkl-$(LKL_HOST_CONFIG_POSIX) += posix-host.o
+lib/Build:11:liblkl-$(LKL_HOST_CONFIG_NT) += nt-host.o
+lib/Build:12:liblkl-$(LKL_HOST_CONFIG_DCE) += dce_host.o
+lib/Build:13:liblkl-y += utils.o
+lib/Build:14:liblkl-y += virtio_blk.o
+lib/Build:15:liblkl-y += virtio.o
+lib/Build:16:liblkl-y += dbg.o
+lib/Build:17:liblkl-y += dbg_handler.o
+lib/Build:18:liblkl-$(LKL_HOST_CONFIG_VIRTIO_NET) += virtio_net.o
+lib/Build:19:liblkl-$(LKL_HOST_CONFIG_VIRTIO_NET) += virtio_net_fd.o
+lib/Build:20:liblkl-$(LKL_HOST_CONFIG_VIRTIO_NET) += virtio_net_tap.o
+lib/Build:21:liblkl-$(LKL_HOST_CONFIG_VIRTIO_NET) += virtio_net_raw.o
+lib/Build:22:liblkl-$(LKL_HOST_CONFIG_VIRTIO_NET_MACVTAP) += virtio_net_macvtap.o
+lib/Build:23:liblkl-$(LKL_HOST_CONFIG_VIRTIO_NET_DPDK) += virtio_net_dpdk.o
+lib/Build:24:liblkl-$(LKL_HOST_CONFIG_VIRTIO_NET_VDE) += virtio_net_vde.o
+lib/Build:25:liblkl-$(LKL_HOST_CONFIG_VIRTIO_NET) += virtio_net_pipe.o
+lib/Build:26:liblkl-y += ../../perf/pmu-events/jsmn.o
+lib/Build:27:liblkl-y += config.o
+lib/virtio_net_macvtap.c:7: * Current implementation is linux-specific.
+lib/virtio_net_raw.c:8: * Current implementation is linux-specific.
+lib/virtio.c:71:	return q->avail->ring[q->num];
+lib/virtio.c:76:	*((uint16_t *)&q->used->ring[q->num]) = val;
+lib/virtio.c:81:	dev->int_status |= VIRTIO_MMIO_INT_VRING;
+lib/virtio.c:84:	lkl_trigger_irq(dev->irq);
+lib/virtio.c:89:	return le16toh(q->used->idx);
+lib/virtio.c:95:	uint16_t desc_idx = q->avail->ring[avail_idx & (q->num - 1)];
+lib/virtio.c:97:	used_idx = used_idx & (q->num - 1);
+lib/virtio.c:98:	q->used->ring[used_idx].id = desc_idx;
+lib/virtio.c:99:	q->used->ring[used_idx].len = htole16(len);
+lib/virtio.c:111:	q->used->idx = htole16(idx);
+lib/virtio.c:120:	struct virtio_queue *q = _req->q;
+lib/virtio.c:121:	uint16_t avail_idx = _req->idx;
+lib/virtio.c:122:	uint16_t used_idx = virtio_get_used_idx(_req->q);
+lib/virtio.c:126:	 * We've potentially used up multiple (non-chained) descriptors and have
+lib/virtio.c:129:	for (i = 0; i < req->buf_count; i++) {
+lib/virtio.c:132:		if (!q->max_merge_len)
+lib/virtio.c:135:			used_len = min_len(len,  req->buf[i].iov_len);
+lib/virtio.c:139:		len -= used_len;
+lib/virtio.c:144:	q->last_avail_idx = avail_idx;
+lib/virtio.c:149:	if (q->last_avail_idx == le16toh(q->avail->idx))
+lib/virtio.c:153:	 * There are two rings: q->avail and q->used for each of the rx and tx
+lib/virtio.c:163:	 * q->used and appends buffer to it after consuming it from q->avail.
+lib/virtio.c:168:	 * trigger the irq when this item in q->used ring is populated."
+lib/virtio.c:171:	 * driver sets virtio_get_used_event(q), q->used->idx may already be
+lib/virtio.c:173:	 * virtio_get_used_event(q) < q->used->idx.
+lib/virtio.c:176:	 * virtio_get_used_event(q) < q->used->idx, last_used_idx_signaled is
+lib/virtio.c:178:	 * last_used_idx_signaled <= virtio_get_used_event(q) < q->used->idx
+lib/virtio.c:185:					     q->last_used_idx_signaled)) {
+lib/virtio.c:186:		q->last_used_idx_signaled = virtio_get_used_idx(q);
+lib/virtio.c:187:		virtio_deliver_irq(_req->dev);
+lib/virtio.c:193: * queue's circular buffer, converting from little-endian to
+lib/virtio.c:200:	return &q->desc[le16toh(le_idx) & (q->num -1)];
+lib/virtio.c:207:	uint16_t desc_idx = q->avail->ring[idx & (q->num - 1)];
+lib/virtio.c:216:	struct iovec *buf = &req->buf[req->buf_count++];
+lib/virtio.c:218:	buf->iov_base = (void *)(uintptr_t)le64toh(vring_desc->addr);
+lib/virtio.c:219:	buf->iov_len = le32toh(vring_desc->len);
+lib/virtio.c:221:	if (!(buf->iov_base && buf->iov_len))
+lib/virtio.c:223:			     buf->iov_base, buf->iov_len);
+lib/virtio.c:225:	req->total_len += buf->iov_len;
+lib/virtio.c:234:	if (q->max_merge_len) {
+lib/virtio.c:235:		if (++(*idx) == le16toh(q->avail->idx))
+lib/virtio.c:237:		desc_idx = q->avail->ring[*idx & (q->num - 1)];
+lib/virtio.c:241:	if (!(le16toh(desc->flags) & LKL_VRING_DESC_F_NEXT))
+lib/virtio.c:243:	return vring_desc_at_le_idx(q, desc->next);
+lib/virtio.c:259:	struct virtio_queue *q = &dev->queue[qidx];
+lib/virtio.c:260:	uint16_t idx = q->last_avail_idx;
+lib/virtio.c:271:		if (q->max_merge_len && req->total_len > q->max_merge_len)
+lib/virtio.c:274:	} while (desc && req->buf_count < VIRTIO_REQ_MAX_BUFS);
+lib/virtio.c:276:	if (desc && le16toh(desc->flags) & LKL_VRING_DESC_F_NEXT)
+lib/virtio.c:279:	return dev->ops->enqueue(dev, qidx, req);
+lib/virtio.c:283: * netdevs --- either through a tx/rx thread poll (which the LKL
+lib/virtio.c:290: * particular virtqueue, with dev->ops->acquire_queue), since they
+lib/virtio.c:293: * have non-NULL acquire/release_queue.
+lib/virtio.c:301:	struct virtio_queue *q = &dev->queue[qidx];
+lib/virtio.c:303:	if (!q->ready)
+lib/virtio.c:306:	if (dev->ops->acquire_queue)
+lib/virtio.c:307:		dev->ops->acquire_queue(dev, qidx);
+lib/virtio.c:309:	while (q->last_avail_idx != le16toh(q->avail->idx)) {
+lib/virtio.c:312:		 * q->avail->idx.
+lib/virtio.c:317:		if (q->last_avail_idx == le16toh(q->avail->idx))
+lib/virtio.c:318:			virtio_set_avail_event(q, q->avail->idx);
+lib/virtio.c:321:	if (dev->ops->release_queue)
+lib/virtio.c:322:		dev->ops->release_queue(dev, qidx);
+lib/virtio.c:327:	if (dev->device_features_sel)
+lib/virtio.c:328:		return (uint32_t)(dev->device_features >> 32);
+lib/virtio.c:330:	return (uint32_t)dev->device_features;
+lib/virtio.c:338:	if (dev->driver_features_sel) {
+lib/virtio.c:339:		tmp = dev->driver_features & 0xFFFFFFFF;
+lib/virtio.c:340:		dev->driver_features = tmp | (uint64_t)val << 32;
+lib/virtio.c:342:		tmp = dev->driver_features & 0xFFFFFFFF00000000;
+lib/virtio.c:343:		dev->driver_features = tmp | val;
+lib/virtio.c:353:		offset -= VIRTIO_MMIO_CONFIG;
+lib/virtio.c:354:		if (offset + size > dev->config_len)
+lib/virtio.c:355:			return -LKL_EINVAL;
+lib/virtio.c:356:		memcpy(res, dev->config_data + offset, size);
+lib/virtio.c:361:		return -LKL_EINVAL;
+lib/virtio.c:371:		val = dev->device_id;
+lib/virtio.c:374:		val = dev->vendor_id;
+lib/virtio.c:380:		val = dev->queue[dev->queue_sel].num_max;
+lib/virtio.c:383:		val = dev->queue[dev->queue_sel].ready;
+lib/virtio.c:386:		val = dev->int_status;
+lib/virtio.c:389:		val = dev->status;
+lib/virtio.c:392:		val = dev->config_gen;
+lib/virtio.c:395:		return -1;
+lib/virtio.c:422:	    (!(dev->driver_features & BIT(LKL_VIRTIO_F_VERSION_1)) ||
+lib/virtio.c:423:	     !(dev->driver_features & BIT(LKL_VIRTIO_RING_F_EVENT_IDX)) ||
+lib/virtio.c:424:	     dev->ops->check_features(dev)))
+lib/virtio.c:426:	dev->status = val;
+lib/virtio.c:432:	struct virtio_queue *q = &dev->queue[dev->queue_sel];
+lib/virtio.c:437:		offset -= VIRTIO_MMIO_CONFIG;
+lib/virtio.c:439:		if (offset + size >= dev->config_len)
+lib/virtio.c:440:			return -LKL_EINVAL;
+lib/virtio.c:441:		memcpy(dev->config_data + offset, res, size);
+lib/virtio.c:446:		return -LKL_EINVAL;
+lib/virtio.c:453:			return -LKL_EINVAL;
+lib/virtio.c:454:		dev->device_features_sel = val;
+lib/virtio.c:458:			return -LKL_EINVAL;
+lib/virtio.c:459:		dev->driver_features_sel = val;
+lib/virtio.c:465:		dev->queue_sel = val;
+lib/virtio.c:468:		dev->queue[dev->queue_sel].num = val;
+lib/virtio.c:471:		dev->queue[dev->queue_sel].ready = val;
+lib/virtio.c:477:		dev->int_status = 0;
+lib/virtio.c:483:		set_ptr_low((void **)&q->desc, val);
+lib/virtio.c:486:		set_ptr_high((void **)&q->desc, val);
+lib/virtio.c:489:		set_ptr_low((void **)&q->avail, val);
+lib/virtio.c:492:		set_ptr_high((void **)&q->avail, val);
+lib/virtio.c:495:		set_ptr_low((void **)&q->used, val);
+lib/virtio.c:498:		set_ptr_high((void **)&q->used, val);
+lib/virtio.c:501:		ret = -1;
+lib/virtio.c:518:	dev->queue[q].max_merge_len = len;
+lib/virtio.c:523:	int qsize = queues * sizeof(*dev->queue);
+lib/virtio.c:529:	dev->irq = lkl_get_free_irq("virtio");
+lib/virtio.c:530:	if (dev->irq < 0)
+lib/virtio.c:531:		return dev->irq;
+lib/virtio.c:533:	dev->int_status = 0;
+lib/virtio.c:534:	dev->device_features |= BIT(LKL_VIRTIO_F_VERSION_1) |
+lib/virtio.c:536:	dev->queue = lkl_host_ops.mem_alloc(qsize);
+lib/virtio.c:537:	if (!dev->queue)
+lib/virtio.c:538:		return -LKL_ENOMEM;
+lib/virtio.c:540:	memset(dev->queue, 0, qsize);
+lib/virtio.c:542:		dev->queue[i].num_max = num_max;
+lib/virtio.c:544:	mmio_size = VIRTIO_MMIO_CONFIG + dev->config_len;
+lib/virtio.c:545:	dev->base = register_iomem(dev, mmio_size, &virtio_ops);
+lib/virtio.c:546:	if (!dev->base) {
+lib/virtio.c:547:		lkl_host_ops.mem_free(dev->queue);
+lib/virtio.c:548:		return -LKL_ENOMEM;
+lib/virtio.c:552:		avail = sizeof(lkl_virtio_devs) - (devs - lkl_virtio_devs);
+lib/virtio.c:554:				     mmio_size, (uintptr_t) dev->base, dev->irq);
+lib/virtio.c:556:			lkl_put_irq(dev->irq, "virtio");
+lib/virtio.c:557:			unregister_iomem(dev->base);
+lib/virtio.c:558:			lkl_host_ops.mem_free(dev->queue);
+lib/virtio.c:559:			return -LKL_ENOMEM;
+lib/virtio.c:562:		dev->virtio_mmio_id = lkl_num_virtio_boot_devs++;
+lib/virtio.c:565:		    lkl_sys_virtio_mmio_device_add((long)dev->base, mmio_size,
+lib/virtio.c:566:						   dev->irq);
+lib/virtio.c:569:			return -1;
+lib/virtio.c:571:		dev->virtio_mmio_id = lkl_num_virtio_boot_devs + ret;
+lib/virtio.c:590:	if (dev->virtio_mmio_id >= virtio_get_num_bootdevs())
+lib/virtio.c:591:		ret = snprintf(devname, sizeof(devname), "virtio-mmio.%d.auto",
+lib/virtio.c:592:			       dev->virtio_mmio_id - virtio_get_num_bootdevs());
+lib/virtio.c:594:		ret = snprintf(devname, sizeof(devname), "virtio-mmio.%d",
+lib/virtio.c:595:			       dev->virtio_mmio_id);
+lib/virtio.c:597:		return -LKL_ENOMEM;
+lib/virtio.c:599:	fd = lkl_sys_open("/sysfs/bus/platform/drivers/virtio-mmio/unbind",
+lib/virtio.c:619:	lkl_put_irq(dev->irq, "virtio");
+lib/virtio.c:620:	unregister_iomem(dev->base);
+lib/virtio.c:621:	lkl_host_ops.mem_free(dev->queue);
+lib/nt-host.c:28:	sem->sem = CreateSemaphore(NULL, count, 100, NULL);
+lib/nt-host.c:34:	ReleaseSemaphore(sem->sem, 1, NULL);
+lib/nt-host.c:39:	WaitForSingleObject(sem->sem, INFINITE);
+lib/nt-host.c:44:	CloseHandle(sem->sem);
+lib/nt-host.c:55:		_mutex->handle = CreateMutex(0, FALSE, 0);
+lib/nt-host.c:57:		_mutex->handle = CreateSemaphore(NULL, 1, 100, NULL);
+lib/nt-host.c:58:	_mutex->recursive = recursive;
+lib/nt-host.c:64:	WaitForSingleObject(mutex->handle, INFINITE);
+lib/nt-host.c:69:	if (_mutex->recursive)
+lib/nt-host.c:70:		ReleaseMutex(_mutex->handle);
+lib/nt-host.c:72:		ReleaseSemaphore(_mutex->handle, 1, NULL);
+lib/nt-host.c:77:	CloseHandle(_mutex->handle);
+lib/nt-host.c:116:	return ret ? -1 : 0;
+lib/nt-host.c:133:	ret->key = FlsAlloc((PFLS_CALLBACK_FUNCTION)destructor);
+lib/nt-host.c:134:	if (ret->key == TLS_OUT_OF_INDEXES) {
+lib/nt-host.c:144:	FlsSetValue(key->key, NULL);
+lib/nt-host.c:145:	FlsFree(key->key);
+lib/nt-host.c:151:	return FlsSetValue(key->key, data) ? 0 : -1;
+lib/nt-host.c:156:	return FlsGetValue(key->key);
+lib/nt-host.c:176:	return (uli.QuadPart - DIFF_1601_TO_1970_IN_100NS) * 100;
+lib/nt-host.c:193:	t->queue = CreateTimerQueue();
+lib/nt-host.c:194:	if (!t->queue) {
+lib/nt-host.c:199:	t->callback = fn;
+lib/nt-host.c:200:	t->arg = arg;
+lib/nt-host.c:210:		t->callback(t->arg);
+lib/nt-host.c:218:	return !CreateTimerQueueTimer(&tmp, t->queue, timer_callback, t,
+lib/nt-host.c:228:	DeleteTimerQueueEx(t->queue, completion);
+lib/nt-host.c:296:		return -1;
+lib/nt-host.c:304:	unsigned long long offset = req->sector * 512;
+lib/nt-host.c:308:	switch (req->type) {
+lib/nt-host.c:314:		for (i = 0; i < req->count; i++) {
+lib/nt-host.c:316:			struct iovec *buf = &req->buf[i];
+lib/nt-host.c:321:			if (req->type == LKL_DEV_BLK_TYPE_READ)
+lib/nt-host.c:322:				ret = ReadFile(disk.handle, buf->iov_base,
+lib/nt-host.c:323:					       buf->iov_len, &res, &ov);
+lib/nt-host.c:325:				ret = WriteFile(disk.handle, buf->iov_base,
+lib/nt-host.c:326:						buf->iov_len, &res, &ov);
+lib/nt-host.c:330:				err = -1;
+lib/nt-host.c:334:			if (res != buf->iov_len) {
+lib/nt-host.c:336:					   res, buf->iov_len);
+lib/nt-host.c:337:				err = -1;
+lib/nt-host.c:341:			offset += buf->iov_len;
+lib/hijack/Build:1:liblkl-hijack-y += hijack.o
+lib/hijack/Build:2:liblkl-hijack-y += init.o
+lib/hijack/Build:3:liblkl-hijack-y += xlate.o
+lib/dbg.c:29:                next = memchr(ptr, '/', end-ptr);
+lib/dbg.c:33:                len = next-ptr;
+lib/dbg.c:39:                                        res_len = slash - res;
+lib/dbg.c:70:			strncat(path, "/", LKL_PATH_MAX - strlen(path) - 1);
+lib/dbg.c:71:			strncat(path, argv[0], LKL_PATH_MAX - strlen(path) - 1);
+lib/dbg.c:113:				printf("%s\n", de->d_name);
+lib/dbg.c:179:	while ((ret = lkl_sys_read(fd, buf, sizeof(buf) - 1)) > 0) {
+lib/dbg.c:204:	printf("Input the content and stop by hitting Ctrl-D:\n");
+lib/dbg.c:223:	else  return -1;
+lib/dbg.c:230:			return -1;
+lib/dbg.c:267:			fprintf(stderr, "Too long input > %d\n", MAX_BUF - 1);
+lib/virtio_net_vde.c:42:	ret = vde_send(nd_vde->conn, data, len, 0);
+lib/virtio_net_vde.c:44:		return -1;
+lib/virtio_net_vde.c:60:	 *   ret = vde_recv(nd_vde->conn, data, len, MSG_DONTWAIT);
+lib/virtio_net_vde.c:65:		ret = vde_recv(nd_vde->conn, data, len, 0);
+lib/virtio_net_vde.c:67:		return -1;
+lib/virtio_net_vde.c:78:					.fd = vde_datafd(nd_vde->conn),
+lib/virtio_net_vde.c:82:					.fd = vde_ctlfd(nd_vde->conn),
+lib/virtio_net_vde.c:107:	return net_vde_poll_with_timeout(nd, -1);
+lib/virtio_net_vde.c:115:	vde_close(nd_vde->conn);
+lib/virtio_net_vde.c:138:	nd->dev.ops = &vde_net_ops;
+lib/virtio_net_vde.c:144:		/* vde_open() takes a non-const char * which is a bug in their
+lib/virtio_net_vde.c:158:	nd->conn = vde_open(switch_path_copy, "lkl-virtio-net", &open_args);
+lib/virtio_net_vde.c:160:	if (nd->conn == 0) {
+lib/virtio_net_vde.c:166:	return &nd->dev;
+lib/vfio_pci.c:1:// SPDX-License-Identifier: GPL-2.0
+lib/vfio_pci.c:32: * vfio_pci_add - Create a new pci device
+lib/vfio_pci.c:36: * @name - PCI device name (as %x:%x:%x.%x format)
+lib/vfio_pci.c:37: * @kernel_ram - the start address of kernel memory needed to be mapped for DMA.
+lib/vfio_pci.c:39: * @ram_size - the size of kernel memory, should be page-aligned as well.
+lib/vfio_pci.c:61:	dev->device_info.argsz = sizeof(struct vfio_device_info);
+lib/vfio_pci.c:62:	dev->config_reg.argsz = sizeof(struct vfio_region_info);
+lib/vfio_pci.c:63:	dev->dma_map.argsz = sizeof(struct vfio_iommu_type1_dma_map);
+lib/vfio_pci.c:110:		dev->dma_map.vaddr = (uint64_t)kernel_ram;
+lib/vfio_pci.c:111:		dev->dma_map.size = ram_size;
+lib/vfio_pci.c:112:		dev->dma_map.iova = 0;
+lib/vfio_pci.c:113:		dev->dma_map.flags =
+lib/vfio_pci.c:115:		if (ioctl(container_fd, VFIO_IOMMU_MAP_DMA, &dev->dma_map) < 0)
+lib/vfio_pci.c:121:	dev->fd = ioctl(group_fd, VFIO_GROUP_GET_DEVICE_FD, path);
+lib/vfio_pci.c:123:	if (dev->fd < 0)
+lib/vfio_pci.c:126:	if (ioctl(dev->fd, VFIO_DEVICE_GET_INFO, &dev->device_info) < 0)
+lib/vfio_pci.c:129:	if (dev->device_info.num_regions <= VFIO_PCI_CONFIG_REGION_INDEX)
+lib/vfio_pci.c:132:	dev->config_reg.index = VFIO_PCI_CONFIG_REGION_INDEX;
+lib/vfio_pci.c:134:	if (ioctl(dev->fd, VFIO_DEVICE_GET_REGION_INFO, &dev->config_reg) < 0)
+lib/vfio_pci.c:152:	dev->quit = 1;
+lib/vfio_pci.c:153:	lkl_host_ops.thread_join(dev->int_thread);
+lib/vfio_pci.c:154:	close(dev->fd);
+lib/vfio_pci.c:162:	if (pread(dev->fd, &status, 2, dev->config_reg.offset + 6) != 2)
+lib/vfio_pci.c:178:	if (dev->device_info.num_irqs <= VFIO_PCI_INTX_IRQ_INDEX)
+lib/vfio_pci.c:183:	if (ioctl(dev->fd, VFIO_DEVICE_GET_IRQ_INFO, &irq))
+lib/vfio_pci.c:190:	irq_set->argsz = sizeof(irq_set_buf);
+lib/vfio_pci.c:191:	irq_set->count = 1;
+lib/vfio_pci.c:192:	irq_set->flags =
+lib/vfio_pci.c:194:	irq_set->index = VFIO_PCI_INTX_IRQ_INDEX;
+lib/vfio_pci.c:195:	irq_set->start = 0;
+lib/vfio_pci.c:196:	dev->irq_fd = eventfd(0, EFD_CLOEXEC);
+lib/vfio_pci.c:197:	if (dev->irq_fd < 0)
+lib/vfio_pci.c:199:	*(int *)&irq_set->data = dev->irq_fd;
+lib/vfio_pci.c:201:	if (ioctl(dev->fd, VFIO_DEVICE_SET_IRQS, irq_set))
+lib/vfio_pci.c:204:	lkl_host_ops.sem_up(dev->thread_init_sem);
+lib/vfio_pci.c:210:		while (check_irq_status(dev) && !dev->quit) {
+lib/vfio_pci.c:211:			lkl_trigger_irq(dev->irq);
+lib/vfio_pci.c:215:		if (dev->quit)
+lib/vfio_pci.c:219:		irq_set->argsz = sizeof(*irq_set);
+lib/vfio_pci.c:220:		irq_set->count = 1;
+lib/vfio_pci.c:221:		irq_set->flags =
+lib/vfio_pci.c:223:		irq_set->index = VFIO_PCI_INTX_IRQ_INDEX;
+lib/vfio_pci.c:224:		irq_set->start = 0;
+lib/vfio_pci.c:225:		if (ioctl(dev->fd, VFIO_DEVICE_SET_IRQS, irq_set))
+lib/vfio_pci.c:234:			FD_SET(dev->irq_fd, &rfds);
+lib/vfio_pci.c:237:			rc = select(dev->irq_fd + 1, &rfds, NULL, NULL, &tv);
+lib/vfio_pci.c:238:			if (rc == -1)
+lib/vfio_pci.c:241:				if (read(dev->irq_fd, &icount, sizeof(icount)) <
+lib/vfio_pci.c:246:			else if (dev->quit)
+lib/vfio_pci.c:260:	dev->thread_init_sem = lkl_host_ops.sem_alloc(0);
+lib/vfio_pci.c:261:	if (!dev->thread_init_sem)
+lib/vfio_pci.c:262:		return -1;
+lib/vfio_pci.c:264:	dev->irq = irq;
+lib/vfio_pci.c:266:	dev->int_thread =
+lib/vfio_pci.c:268:	if (!dev->int_thread) {
+lib/vfio_pci.c:269:		lkl_host_ops.sem_free(dev->thread_init_sem);
+lib/vfio_pci.c:270:		return -1;
+lib/vfio_pci.c:274:	lkl_host_ops.sem_down(dev->thread_init_sem);
+lib/vfio_pci.c:275:	lkl_host_ops.sem_free(dev->thread_init_sem);
+lib/vfio_pci.c:282:	return (unsigned long long)vaddr - dev->dma_map.vaddr;
+lib/vfio_pci.c:293:	return pread(dev->fd, val, size, dev->config_reg.offset + where);
+lib/vfio_pci.c:299:	return pwrite(dev->fd, val, size, dev->config_reg.offset + where);
+lib/vfio_pci.c:320:		return -LKL_EOPNOTSUPP;
+lib/vfio_pci.c:343:		return -LKL_EOPNOTSUPP;
+lib/vfio_pci.c:372:	if (dev->device_info.num_regions <= reg.index)
+lib/vfio_pci.c:377:	if (ioctl(dev->fd, VFIO_DEVICE_GET_REGION_INFO, &reg) < 0)
+lib/vfio_pci.c:384:			 MAP_SHARED, dev->fd, reg.offset);
+lib/net.c:26:			((struct sockaddr_in *)&res->ai_addr)->sin_addr;
+lib/net.c:30:			((struct sockaddr_in6 *)&res->ai_addr)->sin6_addr;
+lib/net.c:45:	sin->sin_family = LKL_AF_INET;
+lib/net.c:46:	sin->sin_addr.lkl_s_addr = addr;
+lib/net.c:47:	sin->sin_port = port;
+lib/net.c:52:	ifr->lkl_ifr_ifindex = ifindex;
+lib/net.c:209:		type = rta->rta_type;
+lib/net.c:216:			rta->rta_len);
+lib/net.c:229:				ifa->ifa_flags;
+lib/net.c:233: * 0 - dad succeed.
+lib/net.c:234: * -1 - dad failed or other error.
+lib/net.c:235: * 1 - should wait for new msg.
+lib/net.c:244:	int len = n->nlmsg_len;
+lib/net.c:246:	if (n->nlmsg_type != LKL_RTM_NEWADDR)
+lib/net.c:249:	len -= LKL_NLMSG_LENGTH(sizeof(*ifa));
+lib/net.c:252:		return -1;
+lib/net.c:256:		     n->nlmsg_len - LKL_NLMSG_LENGTH(sizeof(*ifa)));
+lib/net.c:260:	if (ifa->ifa_index != filter->ifindex)
+lib/net.c:262:	if (ifa->ifa_family != LKL_AF_INET6)
+lib/net.c:269:	    (filter->addr && memcmp(LKL_RTA_DATA(rta_tb[LKL_IFA_LOCAL]),
+lib/net.c:270:				    filter->addr, 16))) {
+lib/net.c:275:		return -1;
+lib/net.c:305:			if (status == -LKL_EINTR || status == -LKL_EAGAIN)
+lib/net.c:309:			if (status == -LKL_ENOBUFS)
+lib/net.c:315:			return -1;
+lib/net.c:320:			return -1;
+lib/net.c:326:			int len = h->nlmsg_len;
+lib/net.c:327:			int l = len - sizeof(*h);
+lib/net.c:332:					return -1;
+lib/net.c:336:				return -1;
+lib/net.c:343:			status -= LKL_NLMSG_ALIGN(len);
+lib/net.c:353:			return -1;
+lib/net.c:367:	fd = netlink_sock(1 << (LKL_RTNLGRP_IPV6_IFADDR - 1));
+lib/net.c:417: * 0 - succeed.
+lib/net.c:418: * < 0 - error number.
+lib/net.c:419: * 1 - should wait for new msg.
+lib/net.c:426:	if (nladdr->nl_pid != 0 || n->nlmsg_seq != s) {
+lib/net.c:431:	if (n->nlmsg_type == LKL_NLMSG_ERROR) {
+lib/net.c:434:		int l = n->nlmsg_len - sizeof(*n);
+lib/net.c:438:		else if (!err->error)
+lib/net.c:442:			lkl_strerror(-err->error));
+lib/net.c:443:		return err->error;
+lib/net.c:446:	return -1;
+lib/net.c:454:	struct lkl_iovec iov = {.iov_base = (void *)n, .iov_len = n->nlmsg_len};
+lib/net.c:462:	n->nlmsg_seq = seq;
+lib/net.c:463:	n->nlmsg_flags |= LKL_NLM_F_ACK;
+lib/net.c:482:	if (LKL_NLMSG_ALIGN(n->nlmsg_len) + LKL_RTA_ALIGN(len) > maxlen) {
+lib/net.c:485:		return -1;
+lib/net.c:488:				      LKL_NLMSG_ALIGN(n->nlmsg_len)));
+lib/net.c:489:	rta->rta_type = type;
+lib/net.c:490:	rta->rta_len = len;
+lib/net.c:492:	n->nlmsg_len = LKL_NLMSG_ALIGN(n->nlmsg_len) + LKL_RTA_ALIGN(len);
+lib/net.c:521:		return -1;
+lib/net.c:563:		return -1;
+lib/net.c:621:		return -1;
+lib/net.c:638:		netaddr = (netaddr >> (32 - route_masklen));
+lib/net.c:639:		netaddr = (netaddr << (32 - route_masklen));
+lib/net.c:654:			netaddr.in6_u.u6_addr8[15-i] = 0;
+lib/net.c:655:		netaddr.in6_u.u6_addr8[15-rmbyte] =
+lib/net.c:656:			(netaddr.in6_u.u6_addr8[15-rmbyte] >> rmbit);
+lib/net.c:657:		netaddr.in6_u.u6_addr8[15-rmbyte] =
+lib/net.c:658:			(netaddr.in6_u.u6_addr8[15-rmbyte] << rmbit);
+lib/net.c:719:		return -1;
+lib/net.c:768:		return -1;
+lib/hijack/init.c:63:	int len, ret = -1;
+lib/hijack/init.c:71:		return -1;
+lib/hijack/init.c:81:	else if (access("lkl-hijack.json", R_OK) == 0)
+lib/hijack/init.c:82:		fd = open("lkl-hijack.json", O_RDONLY, 0);
+lib/hijack/init.c:88:		return -1;
+lib/hijack/init.c:94:		return -1;
+lib/hijack/init.c:101:		return -1;
+lib/hijack/init.c:107:		return -1;
+lib/hijack/init.c:125:	/* reflect pre-configuration */
+lib/hijack/init.c:129:	if (cfg->debug)
+lib/hijack/init.c:141:	if (cfg->single_cpu) {
+lib/hijack/init.c:142:		single_cpu_mode = atoi(cfg->single_cpu);
+lib/hijack/init.c:175:	if (sigaction(32, &sa, 0) == -1) {
+lib/hijack/init.c:181:	ret = lkl_start_kernel(&lkl_host_ops, cfg->boot_cmdline);
+lib/hijack/init.c:190:	memset(dual_fds, -1, sizeof(int) * LKL_FD_OFFSET);
+lib/hijack/init.c:216:	/* reflect post-configuration */
+lib/hijack/xlate.c:20:	case -LKL_EPERM:
+lib/hijack/xlate.c:23:	case -LKL_ENOENT:
+lib/hijack/xlate.c:26:	case -LKL_ESRCH:
+lib/hijack/xlate.c:29:	case -LKL_EINTR:
+lib/hijack/xlate.c:32:	case -LKL_EIO:
+lib/hijack/xlate.c:35:	case -LKL_ENXIO:
+lib/hijack/xlate.c:38:	case -LKL_E2BIG:
+lib/hijack/xlate.c:41:	case -LKL_ENOEXEC:
+lib/hijack/xlate.c:44:	case -LKL_EBADF:
+lib/hijack/xlate.c:47:	case -LKL_ECHILD:
+lib/hijack/xlate.c:50:	case -LKL_EAGAIN:
+lib/hijack/xlate.c:53:	case -LKL_ENOMEM:
+lib/hijack/xlate.c:56:	case -LKL_EACCES:
+lib/hijack/xlate.c:59:	case -LKL_EFAULT:
+lib/hijack/xlate.c:62:	case -LKL_ENOTBLK:
+lib/hijack/xlate.c:65:	case -LKL_EBUSY:
+lib/hijack/xlate.c:68:	case -LKL_EEXIST:
+lib/hijack/xlate.c:71:	case -LKL_EXDEV:
+lib/hijack/xlate.c:74:	case -LKL_ENODEV:
+lib/hijack/xlate.c:77:	case -LKL_ENOTDIR:
+lib/hijack/xlate.c:80:	case -LKL_EISDIR:
+lib/hijack/xlate.c:83:	case -LKL_EINVAL:
+lib/hijack/xlate.c:86:	case -LKL_ENFILE:
+lib/hijack/xlate.c:89:	case -LKL_EMFILE:
+lib/hijack/xlate.c:92:	case -LKL_ENOTTY:
+lib/hijack/xlate.c:95:	case -LKL_ETXTBSY:
+lib/hijack/xlate.c:98:	case -LKL_EFBIG:
+lib/hijack/xlate.c:101:	case -LKL_ENOSPC:
+lib/hijack/xlate.c:104:	case -LKL_ESPIPE:
+lib/hijack/xlate.c:107:	case -LKL_EROFS:
+lib/hijack/xlate.c:110:	case -LKL_EMLINK:
+lib/hijack/xlate.c:113:	case -LKL_EPIPE:
+lib/hijack/xlate.c:116:	case -LKL_EDOM:
+lib/hijack/xlate.c:119:	case -LKL_ERANGE:
+lib/hijack/xlate.c:122:	case -LKL_EDEADLK:
+lib/hijack/xlate.c:125:	case -LKL_ENAMETOOLONG:
+lib/hijack/xlate.c:128:	case -LKL_ENOLCK:
+lib/hijack/xlate.c:131:	case -LKL_ENOSYS:
+lib/hijack/xlate.c:134:	case -LKL_ENOTEMPTY:
+lib/hijack/xlate.c:137:	case -LKL_ELOOP:
+lib/hijack/xlate.c:140:	case -LKL_ENOMSG:
+lib/hijack/xlate.c:143:	case -LKL_EIDRM:
+lib/hijack/xlate.c:146:	case -LKL_ECHRNG:
+lib/hijack/xlate.c:149:	case -LKL_EL2NSYNC:
+lib/hijack/xlate.c:152:	case -LKL_EL3HLT:
+lib/hijack/xlate.c:155:	case -LKL_EL3RST:
+lib/hijack/xlate.c:158:	case -LKL_ELNRNG:
+lib/hijack/xlate.c:161:	case -LKL_EUNATCH:
+lib/hijack/xlate.c:164:	case -LKL_ENOCSI:
+lib/hijack/xlate.c:167:	case -LKL_EL2HLT:
+lib/hijack/xlate.c:170:	case -LKL_EBADE:
+lib/hijack/xlate.c:173:	case -LKL_EBADR:
+lib/hijack/xlate.c:176:	case -LKL_EXFULL:
+lib/hijack/xlate.c:179:	case -LKL_ENOANO:
+lib/hijack/xlate.c:182:	case -LKL_EBADRQC:
+lib/hijack/xlate.c:185:	case -LKL_EBADSLT:
+lib/hijack/xlate.c:188:	case -LKL_EBFONT:
+lib/hijack/xlate.c:191:	case -LKL_ENOSTR:
+lib/hijack/xlate.c:194:	case -LKL_ENODATA:
+lib/hijack/xlate.c:197:	case -LKL_ETIME:
+lib/hijack/xlate.c:200:	case -LKL_ENOSR:
+lib/hijack/xlate.c:203:	case -LKL_ENONET:
+lib/hijack/xlate.c:206:	case -LKL_ENOPKG:
+lib/hijack/xlate.c:209:	case -LKL_EREMOTE:
+lib/hijack/xlate.c:212:	case -LKL_ENOLINK:
+lib/hijack/xlate.c:215:	case -LKL_EADV:
+lib/hijack/xlate.c:218:	case -LKL_ESRMNT:
+lib/hijack/xlate.c:221:	case -LKL_ECOMM:
+lib/hijack/xlate.c:224:	case -LKL_EPROTO:
+lib/hijack/xlate.c:227:	case -LKL_EMULTIHOP:
+lib/hijack/xlate.c:230:	case -LKL_EDOTDOT:
+lib/hijack/xlate.c:233:	case -LKL_EBADMSG:
+lib/hijack/xlate.c:236:	case -LKL_EOVERFLOW:
+lib/hijack/xlate.c:239:	case -LKL_ENOTUNIQ:
+lib/hijack/xlate.c:242:	case -LKL_EBADFD:
+lib/hijack/xlate.c:245:	case -LKL_EREMCHG:
+lib/hijack/xlate.c:248:	case -LKL_ELIBACC:
+lib/hijack/xlate.c:251:	case -LKL_ELIBBAD:
+lib/hijack/xlate.c:254:	case -LKL_ELIBSCN:
+lib/hijack/xlate.c:257:	case -LKL_ELIBMAX:
+lib/hijack/xlate.c:260:	case -LKL_ELIBEXEC:
+lib/hijack/xlate.c:263:	case -LKL_EILSEQ:
+lib/hijack/xlate.c:266:	case -LKL_ERESTART:
+lib/hijack/xlate.c:269:	case -LKL_ESTRPIPE:
+lib/hijack/xlate.c:272:	case -LKL_EUSERS:
+lib/hijack/xlate.c:275:	case -LKL_ENOTSOCK:
+lib/hijack/xlate.c:278:	case -LKL_EDESTADDRREQ:
+lib/hijack/xlate.c:281:	case -LKL_EMSGSIZE:
+lib/hijack/xlate.c:284:	case -LKL_EPROTOTYPE:
+lib/hijack/xlate.c:287:	case -LKL_ENOPROTOOPT:
+lib/hijack/xlate.c:290:	case -LKL_EPROTONOSUPPORT:
+lib/hijack/xlate.c:293:	case -LKL_ESOCKTNOSUPPORT:
+lib/hijack/xlate.c:296:	case -LKL_EOPNOTSUPP:
+lib/hijack/xlate.c:299:	case -LKL_EPFNOSUPPORT:
+lib/hijack/xlate.c:302:	case -LKL_EAFNOSUPPORT:
+lib/hijack/xlate.c:305:	case -LKL_EADDRINUSE:
+lib/hijack/xlate.c:308:	case -LKL_EADDRNOTAVAIL:
+lib/hijack/xlate.c:311:	case -LKL_ENETDOWN:
+lib/hijack/xlate.c:314:	case -LKL_ENETUNREACH:
+lib/hijack/xlate.c:317:	case -LKL_ENETRESET:
+lib/hijack/xlate.c:320:	case -LKL_ECONNABORTED:
+lib/hijack/xlate.c:323:	case -LKL_ECONNRESET:
+lib/hijack/xlate.c:326:	case -LKL_ENOBUFS:
+lib/hijack/xlate.c:329:	case -LKL_EISCONN:
+lib/hijack/xlate.c:332:	case -LKL_ENOTCONN:
+lib/hijack/xlate.c:335:	case -LKL_ESHUTDOWN:
+lib/hijack/xlate.c:338:	case -LKL_ETOOMANYREFS:
+lib/hijack/xlate.c:341:	case -LKL_ETIMEDOUT:
+lib/hijack/xlate.c:344:	case -LKL_ECONNREFUSED:
+lib/hijack/xlate.c:347:	case -LKL_EHOSTDOWN:
+lib/hijack/xlate.c:350:	case -LKL_EHOSTUNREACH:
+lib/hijack/xlate.c:353:	case -LKL_EALREADY:
+lib/hijack/xlate.c:356:	case -LKL_EINPROGRESS:
+lib/hijack/xlate.c:359:	case -LKL_ESTALE:
+lib/hijack/xlate.c:362:	case -LKL_EUCLEAN:
+lib/hijack/xlate.c:365:	case -LKL_ENOTNAM:
+lib/hijack/xlate.c:368:	case -LKL_ENAVAIL:
+lib/hijack/xlate.c:371:	case -LKL_EISNAM:
+lib/hijack/xlate.c:374:	case -LKL_EREMOTEIO:
+lib/hijack/xlate.c:377:	case -LKL_EDQUOT:
+lib/hijack/xlate.c:380:	case -LKL_ENOMEDIUM:
+lib/hijack/xlate.c:383:	case -LKL_EMEDIUMTYPE:
+lib/hijack/xlate.c:386:	case -LKL_ECANCELED:
+lib/hijack/xlate.c:389:	case -LKL_ENOKEY:
+lib/hijack/xlate.c:392:	case -LKL_EKEYEXPIRED:
+lib/hijack/xlate.c:395:	case -LKL_EKEYREVOKED:
+lib/hijack/xlate.c:398:	case -LKL_EKEYREJECTED:
+lib/hijack/xlate.c:401:	case -LKL_EOWNERDEAD:
+lib/hijack/xlate.c:404:	case -LKL_ENOTRECOVERABLE:
+lib/hijack/xlate.c:407:	case -LKL_ERFKILL:
+lib/hijack/xlate.c:410:	case -LKL_EHWPOISON:
+lib/hijack/xlate.c:415:	return -1;
+lib/virtio_net_pipe.c:7: * Current implementation is linux-specific.
+lib/virtio_net_pipe.c:73:	nd->has_vnet_hdr = 1;
+lib/hijack/hijack.c:258:		return lkl_set_errno(-LKL_EOPNOTSUPP);
+lib/hijack/hijack.c:299:		return lkl_set_errno(-LKL_EOPNOTSUPP);
+lib/hijack/hijack.c:315:		if ((dual_fds[fd] != -1) && lkl_running) {
+lib/hijack/hijack.c:317:			dual_fds[fd] = -1;
+lib/hijack/hijack.c:336:		return -1;
+lib/hijack/hijack.c:358:		return -1;
+lib/hijack/hijack.c:398:	ret = host_epoll_wait(earg->epfd, earg->events,
+lib/hijack/hijack.c:399:			      earg->maxevents, earg->timeout);
+lib/hijack/hijack.c:400:	if (ret == -1)
+lib/hijack/hijack.c:401:		earg->errnum = errno;
+lib/hijack/hijack.c:402:	lkl_call(__lkl__NR_write, 3, earg->pipefd, &ret, sizeof(ret));
+lib/hijack/hijack.c:413:	int l_pipe[2] = {-1, -1}, h_pipe[2] = {-1, -1};
+lib/hijack/hijack.c:423:	if (ret == -1) {
+lib/hijack/hijack.c:425:		return -1;
+lib/hijack/hijack.c:429:	if (ret == -1) {
+lib/hijack/hijack.c:431:		return -1;
+lib/hijack/hijack.c:434:	if (dual_fds[epfd] == -1) {
+lib/hijack/hijack.c:445:	if (ret == -1) {
+lib/hijack/hijack.c:448:		return -1;
+lib/hijack/hijack.c:455:	if (ret == -1) {
+lib/hijack/hijack.c:458:		return -1;
+lib/hijack/hijack.c:475:	if (ret_lkl == -1) {
+lib/hijack/hijack.c:479:		return -1;
+lib/hijack/hijack.c:484:	if (ret_host == -1) {
+lib/hijack/hijack.c:488:		return -1;
+lib/hijack/hijack.c:493:	if (ret == -1) {
+lib/hijack/hijack.c:497:		return -1;
+lib/hijack/hijack.c:501:	if (ret == -1) {
+lib/hijack/hijack.c:504:		return -1;
+lib/hijack/hijack.c:564:			    sizeof(*value)) != sizeof(*value) ? -1 : 0;
+lib/hijack/hijack.c:576:			     sizeof(value)) != sizeof(value) ? -1 : 0;
+lib/hijack/hijack.c:585:	    prot != (PROT_READ|PROT_WRITE) || fd != -2 || offset != 0)
+lib/dbg_handler.c:31:	if (sigaction(SIGTSTP, &sa, NULL) == -1) {
+lib/virtio_net_fd.c:29:	/* file-descriptor based device */
+lib/virtio_net_fd.c:56:		ret = writev(nd_fd->fd_tx, iov, cnt);
+lib/virtio_net_fd.c:57:	} while (ret == -1 && errno == EINTR);
+lib/virtio_net_fd.c:65:			nd_fd->poll_tx = 1;
+lib/virtio_net_fd.c:66:			if (write(nd_fd->pipe[1], &tmp, 1) <= 0)
+lib/virtio_net_fd.c:80:		ret = readv(nd_fd->fd_rx, (struct iovec *)iov, cnt);
+lib/virtio_net_fd.c:81:	} while (ret == -1 && errno == EINTR);
+lib/virtio_net_fd.c:89:			nd_fd->poll_rx = 1;
+lib/virtio_net_fd.c:90:			if (write(nd_fd->pipe[1], &tmp, 1) < 0)
+lib/virtio_net_fd.c:103:			.fd = nd_fd->fd_rx,
+lib/virtio_net_fd.c:106:			.fd = nd_fd->fd_tx,
+lib/virtio_net_fd.c:109:			.fd = nd_fd->pipe[0],
+lib/virtio_net_fd.c:115:	if (nd_fd->poll_rx)
+lib/virtio_net_fd.c:117:	if (nd_fd->poll_tx)
+lib/virtio_net_fd.c:121:		ret = poll(pfds, 3, -1);
+lib/virtio_net_fd.c:122:	} while (ret == -1 && errno == EINTR);
+lib/virtio_net_fd.c:135:		ret = read(nd_fd->pipe[0], tmp, PIPE_BUF);
+lib/virtio_net_fd.c:145:		nd_fd->poll_rx = 0;
+lib/virtio_net_fd.c:150:		nd_fd->poll_tx = 0;
+lib/virtio_net_fd.c:163:	close(nd_fd->pipe[0]);
+lib/virtio_net_fd.c:164:	close(nd_fd->pipe[1]);
+lib/virtio_net_fd.c:172:	close(nd_fd->fd_rx);
+lib/virtio_net_fd.c:173:	close(nd_fd->fd_tx);
+lib/virtio_net_fd.c:198:	nd->fd_rx = fd_rx;
+lib/virtio_net_fd.c:199:	nd->fd_tx = fd_tx;
+lib/virtio_net_fd.c:200:	if (pipe(nd->pipe) < 0) {
+lib/virtio_net_fd.c:206:	if (fcntl(nd->pipe[0], F_SETFL, O_NONBLOCK) < 0) {
+lib/virtio_net_fd.c:208:		close(nd->pipe[0]);
+lib/virtio_net_fd.c:209:		close(nd->pipe[1]);
+lib/virtio_net_fd.c:214:	nd->dev.ops = &fd_net_ops;
+lib/virtio_net_fd.c:215:	return &nd->dev;
+lib/virtio_blk.c:18:	if (dev->driver_features == dev->device_features)
+lib/virtio_blk.c:21:	return -LKL_EINVAL;
+lib/virtio_blk.c:31:	if (req->buf_count < 3) {
+lib/virtio_blk.c:36:	h = req->buf[0].iov_base;
+lib/virtio_blk.c:37:	t = req->buf[req->buf_count - 1].iov_base;
+lib/virtio_blk.c:40:	t->status = LKL_DEV_BLK_STATUS_IOERR;
+lib/virtio_blk.c:42:	if (req->buf[0].iov_len != sizeof(*h)) {
+lib/virtio_blk.c:47:	if (req->buf[req->buf_count - 1].iov_len != sizeof(*t)) {
+lib/virtio_blk.c:52:	lkl_req.type = le32toh(h->type);
+lib/virtio_blk.c:53:	lkl_req.prio = le32toh(h->ioprio);
+lib/virtio_blk.c:54:	lkl_req.sector = le64toh(h->sector);
+lib/virtio_blk.c:55:	lkl_req.buf = &req->buf[1];
+lib/virtio_blk.c:56:	lkl_req.count = req->buf_count - 2;
+lib/virtio_blk.c:58:	t->status = blk_dev->ops->request(blk_dev->disk, &lkl_req);
+lib/virtio_blk.c:79:		return -LKL_ENOMEM;
+lib/virtio_blk.c:81:	disk->dev = dev;
+lib/virtio_blk.c:83:	dev->dev.device_id = LKL_VIRTIO_ID_BLOCK;
+lib/virtio_blk.c:84:	dev->dev.vendor_id = 0;
+lib/virtio_blk.c:85:	dev->dev.device_features = 0;
+lib/virtio_blk.c:86:	dev->dev.config_gen = 0;
+lib/virtio_blk.c:87:	dev->dev.config_data = &dev->config;
+lib/virtio_blk.c:88:	dev->dev.config_len = sizeof(dev->config);
+lib/virtio_blk.c:89:	dev->dev.ops = &blk_ops;
+lib/virtio_blk.c:90:	if (disk->ops)
+lib/virtio_blk.c:91:		dev->ops = disk->ops;
+lib/virtio_blk.c:93:		dev->ops = &lkl_dev_blk_ops;
+lib/virtio_blk.c:94:	dev->disk = *disk;
+lib/virtio_blk.c:96:	ret = dev->ops->get_capacity(*disk, &capacity);
+lib/virtio_blk.c:98:		ret = -LKL_ENOMEM;
+lib/virtio_blk.c:101:	dev->config.capacity = htole64(capacity / 512);
+lib/virtio_blk.c:103:	ret = virtio_dev_setup(&dev->dev, 1, 32);
+lib/virtio_blk.c:107:	return dev->dev.virtio_mmio_id;
+lib/virtio_blk.c:122:		return -LKL_EINVAL;
+lib/virtio_blk.c:124:	ret = virtio_dev_cleanup(&dev->dev);
+cptofs.c:21:static const char args_doc_cptofs[] = "-t fstype -i fsimage path... fs_path";
+cptofs.c:22:static const char args_doc_cpfromfs[] = "-t fstype -i fsimage fs_path... path";
+cptofs.c:25:	{"enable-printk", 'p', 0, 0, "show Linux printks"},
+cptofs.c:27:	{"filesystem-type", 't', "string", 0,
+cptofs.c:28:	 "select filesystem type - mandatory"},
+cptofs.c:29:	{"filesystem-image", 'i', "string", 0,
+cptofs.c:30:	 "path to the filesystem image - mandatory"},
+cptofs.c:49:	struct cl_args *cla = state->input;
+cptofs.c:53:		cla->printk = 1;
+cptofs.c:56:		cla->part = atoi(arg);
+cptofs.c:59:		cla->fsimg_type = arg;
+cptofs.c:62:		cla->fsimg_path = arg;
+cptofs.c:65:		cla->selinux = arg;
+cptofs.c:71:		cla->paths = &state->argv[state->next - 1];
+cptofs.c:72:		cla->npaths = state->argc - state->next + 1;
+cptofs.c:73:		state->next = state->argc;
+cptofs.c:216:				to_write -= wrote;
+cptofs.c:251:			mtime->tv_sec = stat.st_mtim.tv_sec;
+cptofs.c:252:			mtime->tv_nsec = stat.st_mtim.tv_nsec;
+cptofs.c:255:			atime->tv_sec = stat.st_atim.tv_sec;
+cptofs.c:256:			atime->tv_nsec = stat.st_atim.tv_nsec;
+cptofs.c:267:			mtime->tv_sec = lkl_stat.lkl_st_mtime;
+cptofs.c:268:			mtime->tv_nsec = lkl_stat.st_mtime_nsec;
+cptofs.c:271:			atime->tv_sec = lkl_stat.lkl_st_atime;
+cptofs.c:272:			atime->tv_nsec = lkl_stat.st_atime_nsec;
+cptofs.c:289:		if (ret == -LKL_EEXIST)
+cptofs.c:345:		ret = -1;
+cptofs.c:353:		ret = -1;
+cptofs.c:361:		ret = -1;
+cptofs.c:368:		ret = -1;
+cptofs.c:416:			ret = lkl_sys_utimensat(-1, dst,
+cptofs.c:426:			ret = utimensat(-1, dst, ts, AT_SYMLINK_NOFOLLOW);
+cptofs.c:462:			name = de->d_name;
+cptofs.c:467:			name = de->d_name;
+cptofs.c:502:		return -1;
+cptofs.c:527:			if (c > src && c[-1] == '.')
+cptofs.c:579:		return -1;
+cptofs.c:613:	for (i = 0; i < cla.npaths - 1; i++) {
+cptofs.c:614:		ret = copy_one(cla.paths[i], mpoint, cla.paths[cla.npaths - 1]);
+include/mingw32/sys/socket.h:1:/* fake file to avoid #include <sys/socket.h> error on non-posix
+include/lkl.h:71: * lkl_sys_lseek - wrapper for lkl_sys_llseek
+include/lkl.h:93: * lkl_strerror - returns a string describing the given error code
+include/lkl.h:95: * @err - error code
+include/lkl.h:96: * @returns - string for the given error code
+include/lkl.h:101: * lkl_perror - prints a string describing the given error code
+include/lkl.h:103: * @msg - prefix for the error message
+include/lkl.h:104: * @err - error code
+include/lkl.h:109: * struct lkl_dev_blk_ops - block device host operations, defined in lkl_host.h.
+include/lkl.h:114: * lkl_disk - host disk handle
+include/lkl.h:116: * @dev - a pointer to 'virtio_blk_dev' structure for this disk
+include/lkl.h:117: * @fd - a POSIX file descriptor that can be used by preadv/pwritev
+include/lkl.h:118: * @handle - an NT file handle that can be used by ReadFile/WriteFile
+include/lkl.h:130: * lkl_disk_add - add a new disk
+include/lkl.h:132: * @disk - the host disk handle
+include/lkl.h:138: * lkl_disk_remove - remove a disk
+include/lkl.h:143: * @disk - the host disk handle
+include/lkl.h:148: * lkl_get_virtiolkl_encode_dev_from_sysfs_blkdev - extract device id from sysfs
+include/lkl.h:155: * @sysfs_path - absolute path to the sysfs dev node
+include/lkl.h:156: * @pdevid - pointer to memory where dev id will be returned
+include/lkl.h:157: * @returns - 0 on success, a negative value on error
+include/lkl.h:162: * lkl_get_virtio_blkdev - get device id of a disk (partition)
+include/lkl.h:166: * @disk_id - the disk id identifying the disk
+include/lkl.h:167: * @part - disk partition or zero for full disk
+include/lkl.h:168: * @pdevid - pointer to memory where dev id will be returned
+include/lkl.h:169: * @returns - 0 on success, a negative value on error
+include/lkl.h:175: * lkl_mount_dev - mount a disk
+include/lkl.h:180: * @disk_id - the disk id identifying the disk to be mounted
+include/lkl.h:181: * @part - disk partition or zero for full disk
+include/lkl.h:182: * @fs_type - filesystem type
+include/lkl.h:183: * @flags - mount flags
+include/lkl.h:184: * @opts - additional filesystem specific mount options
+include/lkl.h:185: * @mnt_str - a string that will be filled by this function with the path where
+include/lkl.h:187: * @mnt_str_len - size of mnt_str
+include/lkl.h:188: * @returns - 0 on success, a negative value on error
+include/lkl.h:195: * lkl_umount_dev - umount a disk
+include/lkl.h:200: * @disk_id - the disk id identifying the disk to be mounted
+include/lkl.h:201: * @part - disk partition or zero for full disk
+include/lkl.h:202: * @flags - umount flags
+include/lkl.h:203: * @timeout_ms - timeout to wait for the kernel to flush closed files so that
+include/lkl.h:205: * @returns - 0 on success, a negative value on error
+include/lkl.h:211: * lkl_umount_timeout - umount filesystem with timeout
+include/lkl.h:213: * @path - the path to unmount
+include/lkl.h:214: * @flags - umount flags
+include/lkl.h:215: * @timeout_ms - timeout to wait for the kernel to flush closed files so that
+include/lkl.h:217: * @returns - 0 on success, a negative value on error
+include/lkl.h:222: * lkl_opendir - open a directory
+include/lkl.h:224: * @path - directory path
+include/lkl.h:225: * @err - pointer to store the error in case of failure
+include/lkl.h:226: * @returns - a handle to be used when calling lkl_readdir
+include/lkl.h:231: * lkl_fdopendir - open a directory
+include/lkl.h:233: * @fd - file descriptor
+include/lkl.h:234: * @err - pointer to store the error in case of failure
+include/lkl.h:235: * @returns - a handle to be used when calling lkl_readdir
+include/lkl.h:240: * lkl_rewinddir - reset directory stream
+include/lkl.h:242: * @dir - the directory handler as returned by lkl_opendir
+include/lkl.h:247: * lkl_closedir - close the directory
+include/lkl.h:249: * @dir - the directory handler as returned by lkl_opendir
+include/lkl.h:254: * lkl_readdir - get the next available entry of the directory
+include/lkl.h:256: * @dir - the directory handler as returned by lkl_opendir
+include/lkl.h:257: * @returns - a lkl_dirent64 entry or NULL if the end of the directory stream is
+include/lkl.h:264: * lkl_errdir - checks if an error occurred during the last lkl_readdir call
+include/lkl.h:266: * @dir - the directory handler as returned by lkl_opendir
+include/lkl.h:267: * @returns - 0 if no error occurred, or a negative value otherwise
+include/lkl.h:272: * lkl_dirfd - gets the file descriptor associated with the directory handle
+include/lkl.h:274: * @dir - the directory handle as returned by lkl_opendir
+include/lkl.h:275: * @returns - a positive value,which is the LKL file descriptor associated with
+include/lkl.h:281: * lkl_if_up - activate network interface
+include/lkl.h:283: * @ifindex - the ifindex of the interface
+include/lkl.h:284: * @returns - return 0 if no error: otherwise negative value returns
+include/lkl.h:289: * lkl_if_down - deactivate network interface
+include/lkl.h:291: * @ifindex - the ifindex of the interface
+include/lkl.h:292: * @returns - return 0 if no error: otherwise negative value returns
+include/lkl.h:297: * lkl_if_set_mtu - set MTU on interface
+include/lkl.h:299: * @ifindex - the ifindex of the interface
+include/lkl.h:300: * @mtu - the requested MTU size
+include/lkl.h:301: * @returns - return 0 if no error: otherwise negative value returns
+include/lkl.h:306: * lkl_if_set_ipv4 - set IPv4 address on interface
+include/lkl.h:308: * @ifindex - the ifindex of the interface
+include/lkl.h:309: * @addr - 4-byte IP address (i.e., struct in_addr)
+include/lkl.h:310: * @netmask_len - prefix length of the @addr
+include/lkl.h:311: * @returns - return 0 if no error: otherwise negative value returns
+include/lkl.h:316: * lkl_set_ipv4_gateway - add an IPv4 default route
+include/lkl.h:318: * @addr - 4-byte IP address of the gateway (i.e., struct in_addr)
+include/lkl.h:319: * @returns - return 0 if no error: otherwise negative value returns
+include/lkl.h:324: * lkl_if_set_ipv4_gateway - add an IPv4 default route in rule table
+include/lkl.h:326: * @ifindex - the ifindex of the interface, used for tableid calculation
+include/lkl.h:327: * @addr - 4-byte IP address of the interface
+include/lkl.h:328: * @netmask_len - prefix length of the @addr
+include/lkl.h:329: * @gw_addr - 4-byte IP address of the gateway
+include/lkl.h:330: * @returns - return 0 if no error: otherwise negative value returns
+include/lkl.h:336: * lkl_if_set_ipv6 - set IPv6 address on interface
+include/lkl.h:339: * @ifindex - the ifindex of the interface
+include/lkl.h:340: * @addr - 16-byte IPv6 address (i.e., struct in6_addr)
+include/lkl.h:341: * @netprefix_len - prefix length of the @addr
+include/lkl.h:342: * @returns - return 0 if no error: otherwise negative value returns
+include/lkl.h:347: * lkl_set_ipv6_gateway - add an IPv6 default route
+include/lkl.h:349: * @addr - 16-byte IPv6 address of the gateway (i.e., struct in6_addr)
+include/lkl.h:350: * @returns - return 0 if no error: otherwise negative value returns
+include/lkl.h:355: * lkl_if_set_ipv6_gateway - add an IPv6 default route in rule table
+include/lkl.h:357: * @ifindex - the ifindex of the interface, used for tableid calculation
+include/lkl.h:358: * @addr - 16-byte IP address of the interface
+include/lkl.h:359: * @netmask_len - prefix length of the @addr
+include/lkl.h:360: * @gw_addr - 16-byte IP address of the gateway (i.e., struct in_addr)
+include/lkl.h:361: * @returns - return 0 if no error: otherwise negative value returns
+include/lkl.h:367: * lkl_netdev - host network device handle, defined in lkl_host.h.
+include/lkl.h:372:* lkl_netdev_args - arguments to lkl_netdev_add
+include/lkl.h:373:* @mac - optional MAC address for the device
+include/lkl.h:374:* @offload - offload bits for the device
+include/lkl.h:382: * lkl_netdev_add - add a new network device
+include/lkl.h:386: * @nd - the network device host handle
+include/lkl.h:387: * @args - arguments that configs the netdev. Can be NULL
+include/lkl.h:397:	return -LKL_ENOSYS;
+include/lkl.h:402:* lkl_netdev_remove - remove a previously added network device
+include/lkl.h:407:* @id - the network device id, as return by @lkl_netdev_add
+include/lkl.h:418: * lkl_netdev_free - frees a network device
+include/lkl.h:420: * @nd - the network device to free
+include/lkl.h:431: * lkl_netdev_get_ifindex - retrieve the interface index for a given network
+include/lkl.h:434: * @id - the network device id
+include/lkl.h:440: * lkl_netdev_tap_create - create TAP net_device for the virtio net backend
+include/lkl.h:442: * @ifname - interface name for the TAP device. need to be configured
+include/lkl.h:444: * @offload - offload bits for the device
+include/lkl.h:457: * lkl_netdev_dpdk_create - create DPDK net_device for the virtio net backend
+include/lkl.h:459: * @ifname - interface name for the DPDK device. The name for DPDK device is
+include/lkl.h:461: * @offload - offload bits for the device
+include/lkl.h:462: * @mac - mac address pointer of dpdk-ed device
+include/lkl.h:476: * lkl_netdev_vde_create - create VDE net_device for the virtio net backend
+include/lkl.h:478: * @switch_path - path to the VDE switch directory. Needs to be started on host
+include/lkl.h:491: * lkl_netdev_raw_create - create raw socket net_device for the virtio net
+include/lkl.h:494: * @ifname - interface name for the snoop device.
+include/lkl.h:506: * lkl_netdev_macvtap_create - create macvtap net_device for the virtio
+include/lkl.h:509: * @path - a file name for the macvtap device. need to be configured
+include/lkl.h:511: * @offload - offload bits for the device
+include/lkl.h:524: * lkl_netdev_pipe_create - create pipe net_device for the virtio
+include/lkl.h:527: * @ifname - a file name for the rx and tx pipe device. need to be configured
+include/lkl.h:529: * @offload - offload bits for the device
+include/lkl.h:542: * lkl_register_dbg_handler- register a signal handler that loads a debug lib.
+include/lkl.h:544: * The signal handler is triggered by Ctrl-Z. It creates a new pthread which
+include/lkl.h:553: * lkl_add_neighbor - add a permanent arp entry
+include/lkl.h:554: * @ifindex - the ifindex of the interface
+include/lkl.h:555: * @af - address family of the ip address. Must be LKL_AF_INET or LKL_AF_INET6
+include/lkl.h:556: * @ip - ip address of the entry in network byte order
+include/lkl.h:557: * @mac - mac address of the entry
+include/lkl.h:562: * lkl_mount_fs - mount a file system type like proc, sys
+include/lkl.h:563: * @fstype - file system type. e.g. proc, sys
+include/lkl.h:564: * @returns - 0 on success. 1 if it's already mounted. negative on failure.
+include/lkl.h:569: * lkl_if_add_ip - add an ip address
+include/lkl.h:570: * @ifindex - the ifindex of the interface
+include/lkl.h:571: * @af - address family of the ip address. Must be LKL_AF_INET or LKL_AF_INET6
+include/lkl.h:572: * @addr - ip address of the entry in network byte order
+include/lkl.h:573: * @netprefix_len - prefix length of the @addr
+include/lkl.h:578: * lkl_if_del_ip - add an ip address
+include/lkl.h:579: * @ifindex - the ifindex of the interface
+include/lkl.h:580: * @af - address family of the ip address. Must be LKL_AF_INET or LKL_AF_INET6
+include/lkl.h:581: * @addr - ip address of the entry in network byte order
+include/lkl.h:582: * @netprefix_len - prefix length of the @addr
+include/lkl.h:587: * lkl_add_gateway - add a gateway
+include/lkl.h:588: * @af - address family of the ip address. Must be LKL_AF_INET or LKL_AF_INET6
+include/lkl.h:589: * @gwaddr - 4-byte IP address of the gateway (i.e., struct in_addr)
+include/lkl.h:595: * temporary table idx = ifindex * 2 + 0 <- ipv4
+include/lkl.h:596: * temporary table idx = ifindex * 2 + 1 <- ipv6
+include/lkl.h:599: * lkl_if_add_rule_from_addr - create an ip rule table with "from" selector
+include/lkl.h:600: * @ifindex - the ifindex of the interface, used for table id calculation
+include/lkl.h:601: * @af - address family of the ip address. Must be LKL_AF_INET or LKL_AF_INET6
+include/lkl.h:602: * @saddr - network byte order ip address, "from" selector address of this rule
+include/lkl.h:607: * lkl_if_add_gateway - add gateway to rule table
+include/lkl.h:608: * @ifindex - the ifindex of the interface, used for table id calculation
+include/lkl.h:609: * @af - address family of the ip address. Must be LKL_AF_INET or LKL_AF_INET6
+include/lkl.h:610: * @gwaddr - 4-byte IP address of the gateway (i.e., struct in_addr)
+include/lkl.h:615: * lkl_if_add_linklocal - add linklocal route to rule table
+include/lkl.h:616: * @ifindex - the ifindex of the interface, used for table id calculation
+include/lkl.h:617: * @af - address family of the ip address. Must be LKL_AF_INET or LKL_AF_INET6
+include/lkl.h:618: * @addr - ip address of the entry in network byte order
+include/lkl.h:619: * @netprefix_len - prefix length of the @addr
+include/lkl.h:624: * lkl_if_wait_ipv6_dad - wait for DAD to be done for a ipv6 address
+include/lkl.h:627: * @ifindex - the ifindex of the interface
+include/lkl.h:628: * @addr - ip address of the entry in network byte order
+include/lkl.h:633: * lkl_set_fd_limit - set the maximum number of file descriptors allowed
+include/lkl.h:634: * @fd_limit - fd max limit
+include/lkl.h:639: * lkl_qdisc_add - set qdisc rule onto an interface
+include/lkl.h:641: * @ifindex - the ifindex of the interface
+include/lkl.h:642: * @root - the name of root class (e.g., "root");
+include/lkl.h:643: * @type - the type of qdisc (e.g., "fq")
+include/lkl.h:648: * lkl_qdisc_parse_add - Add a qdisc entry for an interface with strings
+include/lkl.h:650: * @ifindex - the ifindex of the interface
+include/lkl.h:651: * @entries - strings of qdisc configurations in the form of
+include/lkl.h:657: * lkl_sysctl - write a sysctl value
+include/lkl.h:659: * @path - the path to an sysctl entry (e.g., "net.ipv4.tcp_wmem");
+include/lkl.h:660: * @value - the value of the sysctl (e.g., "4096 87380 2147483647")
+include/lkl.h:665: * lkl_sysctl - read a sysctl value
+include/lkl.h:667: * @path - the path to an sysctl entry (e.g., "net.ipv4.tcp_wmem");
+include/lkl.h:672: * lkl_sysctl_parse_write - Configure sysctl parameters with strings
+include/lkl.h:674: * @sysctls - Configure sysctl parameters as the form of "key=value;..."
+include/lkl_host.h:14: * lkl_printf - print a message via the host print operation
+include/lkl_host.h:36: * struct lkl_blk_req - block device request
+include/lkl_host.h:39: * @prio: priority of request - currently unused
+include/lkl_host.h:57: * struct lkl_dev_blk_ops - block device host operations
+include/lkl_host.h:63:	 * @disk - the disk for which the capacity is requested;
+include/lkl_host.h:64:	 * @res - pointer to receive the capacity, in bytes;
+include/lkl_host.h:65:	 * @returns - 0 in case of success, negative value in case of error
+include/lkl_host.h:74:	 * @disk - the disk the request is issued to;
+include/lkl_host.h:75:	 * @req - a request described by &struct lkl_blk_req
+include/lkl_host.h:87: * struct lkl_dev_net_ops - network device host operations
+include/lkl_host.h:95:	 * @nd - pointer to the network device;
+include/lkl_host.h:96:	 * @iov - pointer to the buffer vector;
+include/lkl_host.h:97:	 * @cnt - # of vectors in iov.
+include/lkl_host.h:111:	 * @nd - pointer to the network device
+include/lkl_host.h:112:	 * @iov - pointer to the buffer vector to store the packet
+include/lkl_host.h:113:	 * @cnt - # of vectors in iov.
+include/lkl_host.h:132:	 * @nd - pointer to the network device
+include/lkl_host.h:134:	 * @returns - LKL_DEV_NET_POLL_RX, LKL_DEV_NET_POLL_TX,
+include/lkl_host.h:142:	 * @nd - pointer to the network device
+include/lkl_host.h:152:	 * @nd - pointer to the network device

@@ -4,8 +4,6 @@
 .SUFFIXES:
 MAKEFLAGS += -r --no-print-directory
 
-KCONFIG?=defconfig
-
 ifneq ($(silent),1)
   ifneq ($(V),1)
 	QUIET_AUTOCONF       = @echo '  AUTOCONF '$@;
@@ -41,7 +39,7 @@ $(OUTPUT)Makefile.conf: Makefile.autoconf
 
 -include $(OUTPUT)Makefile.conf
 
-export CFLAGS += -I$(OUTPUT)/include -Iinclude -Wall -g -O2 -Wextra \
+export CFLAGS += -g -I$(OUTPUT)/include -Iinclude -Wall -g -O2 -Wextra \
 	 -Wno-unused-parameter \
 	 -Wno-missing-field-initializers -fno-strict-aliasing
 
@@ -55,20 +53,19 @@ all: $(TARGETS)
 bin/stat:
 ifeq ($(LKL_HOST_CONFIG_BSD),y)
 	$(Q)ln -sf `which gnustat` bin/stat
-	$(Q)ln -sf `which gsed` bin/sed
 else
 	$(Q)touch bin/stat
 endif
 
 # rule to build lkl.o
 $(OUTPUT)lib/lkl.o: bin/stat
-	$(Q)$(MAKE) -C ../.. ARCH=lkl $(KOPT) $(KCONFIG)
+	$(Q)$(MAKE) -C ../.. ARCH=lkl $(KOPT) defconfig
 # this workaround is for arm32 linker (ld.gold)
 	$(Q)export PATH=$(srctree)/tools/lkl/bin/:${PATH} ;\
 	$(MAKE) -C ../.. ARCH=lkl $(KOPT) install INSTALL_PATH=$(OUTPUT)
 
 # rules to link libs
-$(OUTPUT)%$(SOSUF): LDFLAGS += -shared
+$(OUTPUT)%$(SOSUF): LDFLAGS += -shared -nodefaultlibs -nostdlib
 $(OUTPUT)%$(SOSUF): $(OUTPUT)%-in.o $(OUTPUT)liblkl.a
 	$(QUIET_LINK)$(CC) $(LDFLAGS) $(LDFLAGS_$*-y) -o $@ $^ $(LDLIBS) $(LDLIBS_$*-y)
 
@@ -89,6 +86,9 @@ $(OUTPUT)%-in.o: $(OUTPUT)lib/lkl.o FORCE
 $(OUTPUT)cpfromfs$(EXESUF): cptofs$(EXESUF)
 	$(Q)if ! [ -e $@ ]; then ln -s $< $@; fi
 
+
+#--------------extra targets, Not needed to build LKL-----------------------
+
 clean:
 	$(call QUIET_CLEAN, objects)find $(OUTPUT) -name '*.o' -delete -o -name '\.*.cmd'\
 	 -delete -o -name '\.*.d' -delete
@@ -103,10 +103,10 @@ headers_install: $(TARGETS)
 	$(call QUIET_INSTALL, headers) \
 	    install -d $(DESTDIR)$(PREFIX)/include ; \
 	    install -m 644 include/lkl.h include/lkl_host.h $(OUTPUT)include/lkl_autoconf.h \
-	      include/lkl_config.h $(DESTDIR)$(PREFIX)/include ; \
+	      $(DESTDIR)$(PREFIX)/include ; \
 	    cp -r $(OUTPUT)include/lkl $(DESTDIR)$(PREFIX)/include
 
-libraries_install: $(libs-y:%=$(OUTPUT)%$(SOSUF)) $(OUTPUT)liblkl.a
+libraries_install: $(libs-y:%=$(OUTPUT)%$(SOSUF))
 	$(call QUIET_INSTALL, libraries) \
 	    install -d $(DESTDIR)$(PREFIX)/lib ; \
 	    install -m 644 $^ $(DESTDIR)$(PREFIX)/lib

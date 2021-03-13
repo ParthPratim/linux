@@ -2,26 +2,25 @@ include arch/lkl/auto.conf
 
 KBUILD_CFLAGS += -fno-builtin
 
-exec_format = $(firstword $(subst -, ,$(OUTPUT_FORMAT)))
-
-ifneq (,$(filter elf64 elf32,$(exec_format)))
-KBUILD_CFLAGS += -fPIC
-else ifneq (,$(filter pe,$(exec_format)))
+ifneq (,$(filter $(OUTPUT_FORMAT),elf64-x86-64 elf64-x86-64-freebsd elf32-littlearm elf64-littleaarch64))
+KBUILD_CFLAGS += -fPIC 
+else ifneq (,$(filter $(OUTPUT_FORMAT),pe-i386 pe-x86-64 ))
 ifneq ($(OUTPUT_FORMAT),pe-x86-64)
 prefix=_
 endif
 # workaround for #include_next<stdarg.h> errors
 LINUXINCLUDE := -isystem arch/lkl/include/system $(LINUXINCLUDE)
 # workaround for https://gcc.gnu.org/bugzilla/show_bug.cgi?id=52991
-KBUILD_CFLAGS += -mno-ms-bitfields
+KBUILD_CFLAGS += -mno-ms-bitfields -g
 else
 $(error Unrecognized platform: $(OUTPUT_FORMAT))
 endif
 
-ifeq ($(shell uname -s), Linux)
-NPROC=$(shell nproc)
-else # e.g., FreeBSD
+ifeq ($(shell test ".$(OUTPUT_FORMAT)" = .elf64-x86-64-freebsd -a \
+                   ".$(CROSS_COMPILE)" = . &&  printf "true"), true)
 NPROC=$(shell sysctl -n hw.ncpu)
+else
+NPROC=$(shell nproc)
 endif
 
 LDFLAGS_vmlinux += -r
@@ -34,9 +33,18 @@ LKL_ENTRY_POINTS += \
 	__x86.get_pc_thunk.cx __x86.get_pc_thunk.si __x86.get_pc_thunk.di
 endif
 
+LKL_ENTRY_POINTS += \
+	dce_sock_socket dce_sock_close \
+	dce_sock_recvmsg dce_sock_sendmsg dce_sock_getsockname dce_sock_getpeername \
+	dce_sock_bind dce_sock_connect dce_sock_listen dce_sock_shutdown dce_sock_accept \
+	dce_sock_ioctl dce_sock_setsockopt dce_sock_getsockopt dce_dev_create dce_dev_destroy \
+	dce_dev_get_private dce_dev_set_address dce_dev_set_mtu dce_dev_rx dce_dev_create_packet \
+	dce_sys_iterate_files dce_sys_file_read dce_sys_file_write __initcall_start __initcall_end setup_sim_init
+
 core-y += arch/lkl/kernel/
 core-y += arch/lkl/mm/
 core-y += arch/lkl/drivers/
+core-y += arch/lkl/dce/
 
 all: lkl.o
 
