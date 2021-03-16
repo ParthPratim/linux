@@ -40,6 +40,15 @@ static int warn_pthread(int ret, char *str_exp)
 
 #define WARN_DCE_PTHREAD(exp) warn_pthread(exp, #exp)
 
+/* 
+lkl_host_ops defined previously used semaphore and mutex definitions inside DCE which requireSeparate utilities 
+a Thread * instance which is not available while initializing LKL kernel.
+
+Separate utilities can be created for semaphores, mutexes, timers etc. inside the DCE codebase (inspired by posix-host) 
+and the lkl_host_ops struct is needed to be intialized by calling lkl_start_kernel. 
+*/
+
+
 struct lkl_host_operations lkl_host_ops;
 
 void dce_setup_kernel(void);
