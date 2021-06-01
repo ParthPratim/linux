@@ -5,6 +5,8 @@
 extern "C" {
 #endif
 
+struct SimTask;
+
 struct SimSysFile {
 };
 

@@ -2,30 +2,31 @@ include arch/lkl/auto.conf
 
 KBUILD_CFLAGS += -fno-builtin
 
-ifneq (,$(filter $(OUTPUT_FORMAT),elf64-x86-64 elf64-x86-64-freebsd elf32-littlearm elf64-littleaarch64))
-KBUILD_CFLAGS += -fPIC 
-else ifneq (,$(filter $(OUTPUT_FORMAT),pe-i386 pe-x86-64 ))
+exec_format = $(firstword $(subst -, ,$(OUTPUT_FORMAT)))
+
+ifneq (,$(filter elf64 elf32,$(exec_format)))
+KBUILD_CFLAGS += -fPIC
+else ifneq (,$(filter pe,$(exec_format)))
 ifneq ($(OUTPUT_FORMAT),pe-x86-64)
 prefix=_
 endif
 # workaround for #include_next<stdarg.h> errors
 LINUXINCLUDE := -isystem arch/lkl/include/system $(LINUXINCLUDE)
 # workaround for https://gcc.gnu.org/bugzilla/show_bug.cgi?id=52991
-KBUILD_CFLAGS += -mno-ms-bitfields -g
+KBUILD_CFLAGS += -mno-ms-bitfields
 else
 $(error Unrecognized platform: $(OUTPUT_FORMAT))
 endif
 
-ifeq ($(shell test ".$(OUTPUT_FORMAT)" = .elf64-x86-64-freebsd -a \
-                   ".$(CROSS_COMPILE)" = . &&  printf "true"), true)
-NPROC=$(shell sysctl -n hw.ncpu)
-else
+ifeq ($(shell uname -s), Linux)
 NPROC=$(shell nproc)
+else # e.g., FreeBSD
+NPROC=$(shell sysctl -n hw.ncpu)
 endif
 
 LDFLAGS_vmlinux += -r
 LKL_ENTRY_POINTS := lkl_start_kernel lkl_sys_halt lkl_syscall lkl_trigger_irq \
-	lkl_get_free_irq lkl_put_irq lkl_is_running lkl_bug lkl_printf
+	lkl_get_free_irq lkl_put_irq lkl_is_running lkl_bug lkl_printf lkl_cpu_put 
 
 ifeq ($(OUTPUT_FORMAT),elf32-i386)
 LKL_ENTRY_POINTS += \
@@ -39,7 +40,8 @@ LKL_ENTRY_POINTS += \
 	dce_sock_bind dce_sock_connect dce_sock_listen dce_sock_shutdown dce_sock_accept \
 	dce_sock_ioctl dce_sock_setsockopt dce_sock_getsockopt dce_dev_create dce_dev_destroy \
 	dce_dev_get_private dce_dev_set_address dce_dev_set_mtu dce_dev_rx dce_dev_create_packet \
-	dce_sys_iterate_files dce_sys_file_read dce_sys_file_write __initcall_start __initcall_end setup_sim_init
+	dce_sys_iterate_files dce_sys_file_read dce_sys_file_write __initcall_start __initcall_end setup_sim_init \
+	schedule schedule_timeout
 
 core-y += arch/lkl/kernel/
 core-y += arch/lkl/mm/

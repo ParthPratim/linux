@@ -58,9 +58,7 @@ static struct task_struct *host0;
 static int new_host_task(struct task_struct **task)
 {
 	pid_t pid;
-
 	switch_to_host_task(host0);
-
 	pid = kernel_thread(host_task_stub, NULL, CLONE_FLAGS);
 	if (pid < 0)
 		return pid;

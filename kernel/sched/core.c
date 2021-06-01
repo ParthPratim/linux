@@ -23,6 +23,9 @@
 #define CREATE_TRACE_POINTS
 #include <trace/events/sched.h>
 
+void lib_task_wait(__u64 ns);
+void lib_task_schedule(void);
+
 /*
  * Export tracepoints that act as a bare tracehook (ie: have no trace event
  * associated with them) to allow external modules to probe them.
@@ -3941,13 +3944,15 @@ asmlinkage __visible void __sched schedule(void)
 {
 	struct task_struct *tsk = current;
 
-	sched_submit_work(tsk);
+		sched_submit_work(tsk);
 	do {
-		preempt_disable();
+		preempt_disable();		
 		__schedule(false);
+		//lib_task_schedule();
 		sched_preempt_enable_no_resched();
 	} while (need_resched());
 	sched_update_worker(tsk);
+	//lib_task_schedule();
 }
 EXPORT_SYMBOL(schedule);
 

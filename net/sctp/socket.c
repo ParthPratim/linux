@@ -8986,6 +8986,8 @@ static bool sctp_writeable(struct sock *sk)
 /* Wait for an association to go into ESTABLISHED state. If timeout is 0,
  * returns immediately with EINPROGRESS.
  */
+
+
 static int sctp_wait_for_connect(struct sctp_association *asoc, long *timeo_p)
 {
 	struct sock *sk = asoc->base.sk;
@@ -9017,7 +9019,7 @@ static int sctp_wait_for_connect(struct sctp_association *asoc, long *timeo_p)
 		/* Let another process have a go.  Since we are going
 		 * to sleep anyway.
 		 */
-		release_sock(sk);
+		release_sock(sk);				
 		current_timeo = schedule_timeout(current_timeo);
 		lock_sock(sk);
 

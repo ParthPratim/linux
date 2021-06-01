@@ -35,7 +35,8 @@ int dce_pthread_mutex_unlock (pthread_mutex_t *mutex);
 int dce_pthread_mutex_lock (pthread_mutex_t *mutex);
 int dce_pthread_mutex_destroy (pthread_mutex_t *mutex);
 int dce_pthread_mutex_init (pthread_mutex_t *mutex, const pthread_mutexattr_t *attribute);*/
-
+void lib_task_wait(__u64 ns);
+void lib_task_schedule(void);
 
 #endif /* DCE_HANDLE_API_H */
 

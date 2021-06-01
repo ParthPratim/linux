@@ -111,6 +111,15 @@ void sim_init(struct KernelHandle *kernelHandle, const struct DceHandle *dceHand
 
 }
 
+void lib_task_wait(__u64 ns){
+  g_dceHandle.task_wait(g_kernel,ns);
+}
+
+void lib_task_schedule(void){
+  g_dceHandle.task_schedule();
+}
+
+
 int lib_vprintf(const char *str, va_list args)
 {
   return g_dceHandle.vprintf (g_kernel, str, args);

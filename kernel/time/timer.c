@@ -57,6 +57,9 @@
 
 __visible u64 jiffies_64 __cacheline_aligned_in_smp = INITIAL_JIFFIES;
 
+void lib_task_wait(__u64 ns);
+void lib_task_schedule(void);
+
 EXPORT_SYMBOL(jiffies_64);
 
 /*
@@ -1768,8 +1771,7 @@ static void process_timeout(struct timer_list *t)
 signed long __sched schedule_timeout(signed long timeout)
 {
 	struct process_timer timer;
-	unsigned long expire;
-
+	unsigned long expire;	
 	switch (timeout)
 	{
 	case MAX_SCHEDULE_TIMEOUT:
@@ -1779,7 +1781,7 @@ signed long __sched schedule_timeout(signed long timeout)
 		 * MAX_SCHEDULE_TIMEOUT from one of the negative value
 		 * but I' d like to return a valid offset (>=0) to allow
 		 * the caller to do everything it want with the retval.
-		 */
+		 */		
 		schedule();
 		goto out;
 	default:
@@ -1798,12 +1800,16 @@ signed long __sched schedule_timeout(signed long timeout)
 			goto out;
 		}
 	}
+	
+	u64 ns = ((__u64)timeout) * (1000000000 / HZ);
+	lib_task_wait(ns);
 
 	expire = timeout + jiffies;
 
 	timer.task = current;
 	timer_setup_on_stack(&timer.timer, process_timeout, 0);
 	__mod_timer(&timer.timer, expire, 0);
+	
 	schedule();
 	del_singleshot_timer_sync(&timer.timer);
 

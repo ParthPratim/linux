@@ -57,58 +57,53 @@ extern "C" {
 
 #define lkl_statfs lkl_statfs64
 
-static inline int lkl_sys_statfs(const char *path, struct lkl_statfs *buf)
-{
+    static inline int lkl_sys_statfs(const char *path,
+				     struct lkl_statfs *buf) {
 	return lkl_sys_statfs64(path, sizeof(*buf), buf);
-}
-
-static inline int lkl_sys_fstatfs(unsigned int fd, struct lkl_statfs *buf)
-{
+    } static inline int lkl_sys_fstatfs(unsigned int fd,
+					struct lkl_statfs *buf) {
 	return lkl_sys_fstatfs64(fd, sizeof(*buf), buf);
-}
+    }
 
 #define lkl_sys_nanosleep lkl_sys_nanosleep_time32
-static inline int lkl_sys_nanosleep_time32(struct lkl_timespec *rqtp,
-					   struct lkl_timespec *rmtp)
-{
-	long p[6] = {(long)rqtp, (long)rmtp, 0, 0, 0, 0};
+    static inline int lkl_sys_nanosleep_time32(struct lkl_timespec *rqtp,
+					       struct lkl_timespec *rmtp) {
+	long p[6] = { (long) rqtp, (long) rmtp, 0, 0, 0, 0 };
 
 	return lkl_syscall(__lkl__NR_nanosleep, p);
-}
+    }
 
 #endif
 
-static inline int lkl_sys_stat(const char *path, struct lkl_stat *buf)
-{
+    static inline int lkl_sys_stat(const char *path, struct lkl_stat *buf) {
 	return lkl_sys_fstatat(LKL_AT_FDCWD, path, buf, 0);
-}
+    }
 
-static inline int lkl_sys_lstat(const char *path, struct lkl_stat *buf)
-{
+    static inline int lkl_sys_lstat(const char *path, struct lkl_stat *buf) {
 	return lkl_sys_fstatat(LKL_AT_FDCWD, path, buf,
 			       LKL_AT_SYMLINK_NOFOLLOW);
-}
+    }
 
 #ifdef __lkl__NR_llseek
 /**
  * lkl_sys_lseek - wrapper for lkl_sys_llseek
  */
-static inline long long lkl_sys_lseek(unsigned int fd, __lkl__kernel_loff_t off,
-				      unsigned int whence)
-{
+    static inline long long lkl_sys_lseek(unsigned int fd,
+					  __lkl__kernel_loff_t off,
+					  unsigned int whence) {
 	long long res;
-	long ret = lkl_sys_llseek(fd, off >> 32, off & 0xffffffff, &res, whence);
+	long ret =
+	    lkl_sys_llseek(fd, off >> 32, off & 0xffffffff, &res, whence);
 
 	return ret < 0 ? ret : res;
-}
+    }
 #endif
 
-static inline void *lkl_sys_mmap(void *addr, size_t length, int prot, int flags,
-				 int fd, off_t offset)
-{
-	return (void *)lkl_sys_mmap_pgoff((long)addr, length, prot, flags, fd,
-					  offset >> 12);
-}
+    static inline void *lkl_sys_mmap(void *addr, size_t length, int prot,
+				     int flags, int fd, off_t offset) {
+	return (void *) lkl_sys_mmap_pgoff((long) addr, length, prot,
+					   flags, fd, offset >> 12);
+    }
 
 #define lkl_sys_mmap2 lkl_sys_mmap_pgoff
 
@@ -116,19 +111,18 @@ static inline void *lkl_sys_mmap(void *addr, size_t length, int prot, int flags,
 /**
  * lkl_sys_open - wrapper for lkl_sys_openat
  */
-static inline long lkl_sys_open(const char *file, int flags, int mode)
-{
+    static inline long lkl_sys_open(const char *file, int flags, int mode) {
 	return lkl_sys_openat(LKL_AT_FDCWD, file, flags, mode);
-}
+    }
 
 /**
  * lkl_sys_creat - wrapper for lkl_sys_openat
  */
-static inline long lkl_sys_creat(const char *file, int mode)
-{
+    static inline long lkl_sys_creat(const char *file, int mode) {
 	return lkl_sys_openat(LKL_AT_FDCWD, file,
-			      LKL_O_CREAT|LKL_O_WRONLY|LKL_O_TRUNC, mode);
-}
+			      LKL_O_CREAT | LKL_O_WRONLY | LKL_O_TRUNC,
+			      mode);
+    }
 #endif
 
 
@@ -136,201 +130,197 @@ static inline long lkl_sys_creat(const char *file, int mode)
 /**
  * lkl_sys_access - wrapper for lkl_sys_faccessat
  */
-static inline long lkl_sys_access(const char *file, int mode)
-{
+    static inline long lkl_sys_access(const char *file, int mode) {
 	return lkl_sys_faccessat(LKL_AT_FDCWD, file, mode);
-}
+    }
 #endif
 
 #ifdef __lkl__NR_fchownat
 /**
  * lkl_sys_chown - wrapper for lkl_sys_fchownat
  */
-static inline long lkl_sys_chown(const char *path, lkl_uid_t uid, lkl_gid_t gid)
-{
+    static inline long lkl_sys_chown(const char *path, lkl_uid_t uid,
+				     lkl_gid_t gid) {
 	return lkl_sys_fchownat(LKL_AT_FDCWD, path, uid, gid, 0);
-}
+    }
 #endif
 
 #ifdef __lkl__NR_fchmodat
 /**
  * lkl_sys_chmod - wrapper for lkl_sys_fchmodat
  */
-static inline long lkl_sys_chmod(const char *path, mode_t mode)
-{
+    static inline long lkl_sys_chmod(const char *path, mode_t mode) {
 	return lkl_sys_fchmodat(LKL_AT_FDCWD, path, mode);
-}
+    }
 #endif
 
 #ifdef __lkl__NR_linkat
 /**
  * lkl_sys_link - wrapper for lkl_sys_linkat
  */
-static inline long lkl_sys_link(const char *existing, const char *new)
-{
-	return lkl_sys_linkat(LKL_AT_FDCWD, existing, LKL_AT_FDCWD, new, 0);
-}
+    static inline long lkl_sys_link(const char *existing, const char *new_t) {
+	return lkl_sys_linkat(LKL_AT_FDCWD, existing, LKL_AT_FDCWD, new_t,
+			      0);
+    }
 #endif
 
 #ifdef __lkl__NR_unlinkat
 /**
  * lkl_sys_unlink - wrapper for lkl_sys_unlinkat
  */
-static inline long lkl_sys_unlink(const char *path)
-{
+    static inline long lkl_sys_unlink(const char *path) {
 	return lkl_sys_unlinkat(LKL_AT_FDCWD, path, 0);
-}
+    }
 #endif
 
 #ifdef __lkl__NR_symlinkat
 /**
  * lkl_sys_symlink - wrapper for lkl_sys_symlinkat
  */
-static inline long lkl_sys_symlink(const char *existing, const char *new)
-{
-	return lkl_sys_symlinkat(existing, LKL_AT_FDCWD, new);
-}
+    static inline long lkl_sys_symlink(const char *existing,
+				       const char *new_t) {
+	return lkl_sys_symlinkat(existing, LKL_AT_FDCWD, new_t);
+    }
 #endif
 
 #ifdef __lkl__NR_readlinkat
 /**
  * lkl_sys_readlink - wrapper for lkl_sys_readlinkat
  */
-static inline long lkl_sys_readlink(const char *path, char *buf, size_t bufsize)
-{
+    static inline long lkl_sys_readlink(const char *path, char *buf,
+					size_t bufsize) {
 	return lkl_sys_readlinkat(LKL_AT_FDCWD, path, buf, bufsize);
-}
+    }
 #endif
 
 #ifdef __lkl__NR_renameat
 /**
  * lkl_sys_rename - wrapper for lkl_sys_renameat
  */
-static inline long lkl_sys_rename(const char *old, const char *new)
-{
-	return lkl_sys_renameat(LKL_AT_FDCWD, old, LKL_AT_FDCWD, new);
-}
+    static inline long lkl_sys_rename(const char *old, const char *new_t) {
+	return lkl_sys_renameat(LKL_AT_FDCWD, old, LKL_AT_FDCWD, new_t);
+    }
 #endif
 
 #ifdef __lkl__NR_mkdirat
 /**
  * lkl_sys_mkdir - wrapper for lkl_sys_mkdirat
  */
-static inline long lkl_sys_mkdir(const char *path, mode_t mode)
-{
+    static inline long lkl_sys_mkdir(const char *path, mode_t mode) {
 	return lkl_sys_mkdirat(LKL_AT_FDCWD, path, mode);
-}
+    }
 #endif
 
 #ifdef __lkl__NR_unlinkat
 /**
  * lkl_sys_rmdir - wrapper for lkl_sys_unlinkrat
  */
-static inline long lkl_sys_rmdir(const char *path)
-{
+    static inline long lkl_sys_rmdir(const char *path) {
 	return lkl_sys_unlinkat(LKL_AT_FDCWD, path, LKL_AT_REMOVEDIR);
-}
+    }
 #endif
 
 #ifdef __lkl__NR_mknodat
 /**
  * lkl_sys_mknod - wrapper for lkl_sys_mknodat
  */
-static inline long lkl_sys_mknod(const char *path, mode_t mode, dev_t dev)
-{
+    static inline long lkl_sys_mknod(const char *path, mode_t mode,
+				     dev_t dev) {
 	return lkl_sys_mknodat(LKL_AT_FDCWD, path, mode, dev);
-}
+    }
 #endif
 
 #ifdef __lkl__NR_pipe2
 /**
  * lkl_sys_pipe - wrapper for lkl_sys_pipe2
  */
-static inline long lkl_sys_pipe(int fd[2])
-{
+    static inline long lkl_sys_pipe(int fd[2]) {
 	return lkl_sys_pipe2(fd, 0);
-}
+    }
 #endif
 
 #ifdef __lkl__NR_sendto
 /**
  * lkl_sys_send - wrapper for lkl_sys_sendto
  */
-static inline long lkl_sys_send(int fd, void *buf, size_t len, int flags)
-{
+    static inline long lkl_sys_send(int fd, void *buf, size_t len,
+				    int flags) {
 	return lkl_sys_sendto(fd, buf, len, flags, 0, 0);
-}
+    }
 #endif
 
 #ifdef __lkl__NR_recvfrom
 /**
  * lkl_sys_recv - wrapper for lkl_sys_recvfrom
  */
-static inline long lkl_sys_recv(int fd, void *buf, size_t len, int flags)
-{
+    static inline long lkl_sys_recv(int fd, void *buf, size_t len,
+				    int flags) {
 	return lkl_sys_recvfrom(fd, buf, len, flags, 0, 0);
-}
+    }
 #endif
 
 #ifdef __lkl__NR_pselect6
 /**
  * lkl_sys_select - wrapper for lkl_sys_pselect
  */
-static inline long lkl_sys_select(int n, lkl_fd_set *rfds, lkl_fd_set *wfds,
-				  lkl_fd_set *efds, struct lkl_timeval *tv)
-{
-	long data[2] = { 0, _LKL_NSIG/8 };
+    static inline long lkl_sys_select(int n, lkl_fd_set * rfds,
+				      lkl_fd_set * wfds, lkl_fd_set * efds,
+				      struct lkl_timeval *tv) {
+	long data[2] = { 0, _LKL_NSIG / 8 };
 	struct lkl_timespec ts;
 	lkl_time_t extra_secs;
-	const lkl_time_t max_time = ((1ULL<<8)*sizeof(time_t)-1)-1;
+	const lkl_time_t max_time = ((1ULL << 8) * sizeof(time_t) - 1) - 1;
 
 	if (tv) {
-		if (tv->tv_sec < 0 || tv->tv_usec < 0)
-			return -LKL_EINVAL;
+	    if (tv->tv_sec < 0 || tv->tv_usec < 0)
+		return -LKL_EINVAL;
 
-		extra_secs = tv->tv_usec / 1000000;
-		ts.tv_nsec = tv->tv_usec % 1000000 * 1000;
-		ts.tv_sec = extra_secs > max_time - tv->tv_sec ?
-			max_time : tv->tv_sec + extra_secs;
+	    extra_secs = tv->tv_usec / 1000000;
+	    ts.tv_nsec = tv->tv_usec % 1000000 * 1000;
+	    ts.tv_sec = extra_secs > max_time - tv->tv_sec ?
+		max_time : tv->tv_sec + extra_secs;
 	}
 	return lkl_sys_pselect6(n, rfds, wfds, efds, tv ?
-				(struct __lkl__kernel_timespec *)&ts : 0, data);
-}
+				(struct __lkl__kernel_timespec *) &ts : 0,
+				data);
+    }
 #endif
 
 #ifdef __lkl__NR_ppoll
 /**
  * lkl_sys_poll - wrapper for lkl_sys_ppoll
  */
-static inline long lkl_sys_poll(struct lkl_pollfd *fds, int n, int timeout)
-{
-	return lkl_sys_ppoll(fds, n, timeout >= 0 ?
-			     (struct __lkl__kernel_timespec *)
-			     &((struct lkl_timespec){ .tv_sec = timeout/1000,
-				   .tv_nsec = timeout%1000*1000000 }) : 0,
-			     0, _LKL_NSIG/8);
-}
+    static inline long lkl_sys_poll(struct lkl_pollfd *fds, int n,
+				    int timeout) {
+	return lkl_sys_ppoll(fds, n,
+			     timeout >=
+			     0 ? (struct __lkl__kernel_timespec *)
+			     &((struct lkl_timespec) {.tv_sec =
+			       timeout / 1000,
+			       .tv_nsec = timeout % 1000 * 1000000
+			       }) : 0,
+			     0, _LKL_NSIG / 8);
+    }
 #endif
 
 #ifdef __lkl__NR_epoll_create1
 /**
  * lkl_sys_epoll_create - wrapper for lkl_sys_epoll_create1
  */
-static inline long lkl_sys_epoll_create(int size)
-{
+    static inline long lkl_sys_epoll_create(int size) {
 	return lkl_sys_epoll_create1(0);
-}
+    }
 #endif
 
 #ifdef __lkl__NR_epoll_pwait
 /**
  * lkl_sys_epoll_wait - wrapper for lkl_sys_epoll_pwait
  */
-static inline long lkl_sys_epoll_wait(int fd, struct lkl_epoll_event *ev,
-				      int cnt, int to)
-{
-	return lkl_sys_epoll_pwait(fd, ev, cnt, to, 0, _LKL_NSIG/8);
-}
+    static inline long lkl_sys_epoll_wait(int fd,
+					  struct lkl_epoll_event *ev,
+					  int cnt, int to) {
+	return lkl_sys_epoll_pwait(fd, ev, cnt, to, 0, _LKL_NSIG / 8);
+    }
 #endif
 
 
@@ -341,7 +331,7 @@ static inline long lkl_sys_epoll_wait(int fd, struct lkl_epoll_event *ev,
  * @err - error code
  * @returns - string for the given error code
  */
-const char *lkl_strerror(int err);
+    const char *lkl_strerror(int err);
 
 /**
  * lkl_perror - prints a string describing the given error code
@@ -349,12 +339,12 @@ const char *lkl_strerror(int err);
  * @msg - prefix for the error message
  * @err - error code
  */
-void lkl_perror(char *msg, int err);
+    void lkl_perror(char *msg, int err);
 
 /**
  * struct lkl_dev_blk_ops - block device host operations, defined in lkl_host.h.
  */
-struct lkl_dev_blk_ops;
+    struct lkl_dev_blk_ops;
 
 /**
  * lkl_disk - host disk handle
@@ -363,14 +353,14 @@ struct lkl_dev_blk_ops;
  * @fd - a POSIX file descriptor that can be used by preadv/pwritev
  * @handle - an NT file handle that can be used by ReadFile/WriteFile
  */
-struct lkl_disk {
+    struct lkl_disk {
 	void *dev;
 	union {
-		int fd;
-		void *handle;
+	    int fd;
+	    void *handle;
 	};
 	struct lkl_dev_blk_ops *ops;
-};
+    };
 
 /**
  * lkl_disk_add - add a new disk
@@ -378,7 +368,7 @@ struct lkl_disk {
  * @disk - the host disk handle
  * @returns a disk id (0 is valid) or a strictly negative value in case of error
  */
-int lkl_disk_add(struct lkl_disk *disk);
+    int lkl_disk_add(struct lkl_disk *disk);
 
 /**
  * lkl_disk_remove - remove a disk
@@ -388,7 +378,7 @@ int lkl_disk_add(struct lkl_disk *disk);
  *
  * @disk - the host disk handle
  */
-int lkl_disk_remove(struct lkl_disk disk);
+    int lkl_disk_remove(struct lkl_disk disk);
 
 /**
  * lkl_get_virtiolkl_encode_dev_from_sysfs_blkdev - extract device id from sysfs
@@ -402,7 +392,8 @@ int lkl_disk_remove(struct lkl_disk disk);
  * @pdevid - pointer to memory where dev id will be returned
  * @returns - 0 on success, a negative value on error
  */
-int lkl_encode_dev_from_sysfs(const char *sysfs_path, uint32_t *pdevid);
+    int lkl_encode_dev_from_sysfs(const char *sysfs_path,
+				  uint32_t * pdevid);
 
 /**
  * lkl_get_virtio_blkdev - get device id of a disk (partition)
@@ -414,7 +405,8 @@ int lkl_encode_dev_from_sysfs(const char *sysfs_path, uint32_t *pdevid);
  * @pdevid - pointer to memory where dev id will be returned
  * @returns - 0 on success, a negative value on error
  */
-int lkl_get_virtio_blkdev(int disk_id, unsigned int part, uint32_t *pdevid);
+    int lkl_get_virtio_blkdev(int disk_id, unsigned int part,
+			      uint32_t * pdevid);
 
 
 /**
@@ -433,9 +425,9 @@ int lkl_get_virtio_blkdev(int disk_id, unsigned int part, uint32_t *pdevid);
  * @mnt_str_len - size of mnt_str
  * @returns - 0 on success, a negative value on error
  */
-long lkl_mount_dev(unsigned int disk_id, unsigned int part, const char *fs_type,
-		   int flags, const char *opts,
-		   char *mnt_str, unsigned int mnt_str_len);
+    long lkl_mount_dev(unsigned int disk_id, unsigned int part,
+		       const char *fs_type, int flags, const char *opts,
+		       char *mnt_str, unsigned int mnt_str_len);
 
 /**
  * lkl_mount_blkdev - mount a block device
@@ -452,9 +444,9 @@ long lkl_mount_dev(unsigned int disk_id, unsigned int part, const char *fs_type,
  * @mnt_str_len - size of mnt_str
  * @returns - 0 on success, a negative value on error
  */
-long lkl_mount_blkdev(unsigned int dev, const char *fs_type, int flags,
-		      const char *opts, char *mnt_str,
-		      unsigned int mnt_str_len);
+    long lkl_mount_blkdev(unsigned int dev, const char *fs_type, int flags,
+			  const char *opts, char *mnt_str,
+			  unsigned int mnt_str_len);
 
 /**
  * lkl_umount_dev - umount a disk
@@ -469,8 +461,8 @@ long lkl_mount_blkdev(unsigned int dev, const char *fs_type, int flags,
  * umount can succeed
  * @returns - 0 on success, a negative value on error
  */
-long lkl_umount_dev(unsigned int disk_id, unsigned int part, int flags,
-		    long timeout_ms);
+    long lkl_umount_dev(unsigned int disk_id, unsigned int part, int flags,
+			long timeout_ms);
 
 /**
  * lkl_umount_blkdev - umount a block device
@@ -483,7 +475,7 @@ long lkl_umount_dev(unsigned int disk_id, unsigned int part, int flags,
  * umount can succeed
  * @returns - 0 on success, a negative value on error
  */
-long lkl_umount_blkdev(unsigned int dev, int flags, long timeout_ms);
+    long lkl_umount_blkdev(unsigned int dev, int flags, long timeout_ms);
 
 /**
  * lkl_umount_timeout - umount filesystem with timeout
@@ -494,7 +486,7 @@ long lkl_umount_blkdev(unsigned int dev, int flags, long timeout_ms);
  * umount can succeed
  * @returns - 0 on success, a negative value on error
  */
-long lkl_umount_timeout(char *path, int flags, long timeout_ms);
+    long lkl_umount_timeout(char *path, int flags, long timeout_ms);
 
 /**
  * lkl_opendir - open a directory
@@ -503,7 +495,7 @@ long lkl_umount_timeout(char *path, int flags, long timeout_ms);
  * @err - pointer to store the error in case of failure
  * @returns - a handle to be used when calling lkl_readdir
  */
-struct lkl_dir *lkl_opendir(const char *path, int *err);
+    struct lkl_dir *lkl_opendir(const char *path, int *err);
 
 /**
  * lkl_fdopendir - open a directory
@@ -512,21 +504,21 @@ struct lkl_dir *lkl_opendir(const char *path, int *err);
  * @err - pointer to store the error in case of failure
  * @returns - a handle to be used when calling lkl_readdir
  */
-struct lkl_dir *lkl_fdopendir(int fd, int *err);
+    struct lkl_dir *lkl_fdopendir(int fd, int *err);
 
 /**
  * lkl_rewinddir - reset directory stream
  *
  * @dir - the directory handler as returned by lkl_opendir
  */
-void lkl_rewinddir(struct lkl_dir *dir);
+    void lkl_rewinddir(struct lkl_dir *dir);
 
 /**
  * lkl_closedir - close the directory
  *
  * @dir - the directory handler as returned by lkl_opendir
  */
-int lkl_closedir(struct lkl_dir *dir);
+    int lkl_closedir(struct lkl_dir *dir);
 
 /**
  * lkl_readdir - get the next available entry of the directory
@@ -536,7 +528,7 @@ int lkl_closedir(struct lkl_dir *dir);
  * reached or if an error occurred; check lkl_errdir() to distinguish between
  * errors or end of the directory stream
  */
-struct lkl_linux_dirent64 *lkl_readdir(struct lkl_dir *dir);
+    struct lkl_linux_dirent64 *lkl_readdir(struct lkl_dir *dir);
 
 /**
  * lkl_errdir - checks if an error occurred during the last lkl_readdir call
@@ -544,7 +536,7 @@ struct lkl_linux_dirent64 *lkl_readdir(struct lkl_dir *dir);
  * @dir - the directory handler as returned by lkl_opendir
  * @returns - 0 if no error occurred, or a negative value otherwise
  */
-int lkl_errdir(struct lkl_dir *dir);
+    int lkl_errdir(struct lkl_dir *dir);
 
 /**
  * lkl_dirfd - gets the file descriptor associated with the directory handle
@@ -553,7 +545,7 @@ int lkl_errdir(struct lkl_dir *dir);
  * @returns - a positive value,which is the LKL file descriptor associated with
  * the directory handle, or a negative value otherwise
  */
-int lkl_dirfd(struct lkl_dir *dir);
+    int lkl_dirfd(struct lkl_dir *dir);
 
 /**
  * lkl_if_up - activate network interface
@@ -561,7 +553,7 @@ int lkl_dirfd(struct lkl_dir *dir);
  * @ifindex - the ifindex of the interface
  * @returns - return 0 if no error: otherwise negative value returns
  */
-int lkl_if_up(int ifindex);
+    int lkl_if_up(int ifindex);
 
 /**
  * lkl_if_down - deactivate network interface
@@ -569,7 +561,7 @@ int lkl_if_up(int ifindex);
  * @ifindex - the ifindex of the interface
  * @returns - return 0 if no error: otherwise negative value returns
  */
-int lkl_if_down(int ifindex);
+    int lkl_if_down(int ifindex);
 
 /**
  * lkl_if_set_mtu - set MTU on interface
@@ -578,7 +570,7 @@ int lkl_if_down(int ifindex);
  * @mtu - the requested MTU size
  * @returns - return 0 if no error: otherwise negative value returns
  */
-int lkl_if_set_mtu(int ifindex, int mtu);
+    int lkl_if_set_mtu(int ifindex, int mtu);
 
 /**
  * lkl_if_set_ipv4 - set IPv4 address on interface
@@ -588,7 +580,8 @@ int lkl_if_set_mtu(int ifindex, int mtu);
  * @netmask_len - prefix length of the @addr
  * @returns - return 0 if no error: otherwise negative value returns
  */
-int lkl_if_set_ipv4(int ifindex, unsigned int addr, unsigned int netmask_len);
+    int lkl_if_set_ipv4(int ifindex, unsigned int addr,
+			unsigned int netmask_len);
 
 /**
  * lkl_set_ipv4_gateway - add an IPv4 default route
@@ -596,7 +589,7 @@ int lkl_if_set_ipv4(int ifindex, unsigned int addr, unsigned int netmask_len);
  * @addr - 4-byte IP address of the gateway (i.e., struct in_addr)
  * @returns - return 0 if no error: otherwise negative value returns
  */
-int lkl_set_ipv4_gateway(unsigned int addr);
+    int lkl_set_ipv4_gateway(unsigned int addr);
 
 /**
  * lkl_if_set_ipv4_gateway - add an IPv4 default route in rule table
@@ -607,8 +600,9 @@ int lkl_set_ipv4_gateway(unsigned int addr);
  * @gw_addr - 4-byte IP address of the gateway
  * @returns - return 0 if no error: otherwise negative value returns
  */
-int lkl_if_set_ipv4_gateway(int ifindex, unsigned int addr,
-		unsigned int netmask_len, unsigned int gw_addr);
+    int lkl_if_set_ipv4_gateway(int ifindex, unsigned int addr,
+				unsigned int netmask_len,
+				unsigned int gw_addr);
 
 /**
  * lkl_if_set_ipv6 - set IPv6 address on interface
@@ -619,7 +613,8 @@ int lkl_if_set_ipv4_gateway(int ifindex, unsigned int addr,
  * @netprefix_len - prefix length of the @addr
  * @returns - return 0 if no error: otherwise negative value returns
  */
-int lkl_if_set_ipv6(int ifindex, void* addr, unsigned int netprefix_len);
+    int lkl_if_set_ipv6(int ifindex, void *addr,
+			unsigned int netprefix_len);
 
 /**
  * lkl_set_ipv6_gateway - add an IPv6 default route
@@ -627,7 +622,7 @@ int lkl_if_set_ipv6(int ifindex, void* addr, unsigned int netprefix_len);
  * @addr - 16-byte IPv6 address of the gateway (i.e., struct in6_addr)
  * @returns - return 0 if no error: otherwise negative value returns
  */
-int lkl_set_ipv6_gateway(void* addr);
+    int lkl_set_ipv6_gateway(void *addr);
 
 /**
  * lkl_if_set_ipv6_gateway - add an IPv6 default route in rule table
@@ -638,8 +633,8 @@ int lkl_set_ipv6_gateway(void* addr);
  * @gw_addr - 16-byte IP address of the gateway (i.e., struct in_addr)
  * @returns - return 0 if no error: otherwise negative value returns
  */
-int lkl_if_set_ipv6_gateway(int ifindex, void *addr,
-		unsigned int netmask_len, void *gw_addr);
+    int lkl_if_set_ipv6_gateway(int ifindex, void *addr,
+				unsigned int netmask_len, void *gw_addr);
 
 /**
  * lkl_ifname_to_ifindex - obtain ifindex of an interface by name
@@ -647,22 +642,22 @@ int lkl_if_set_ipv6_gateway(int ifindex, void *addr,
  * @name - string of an interface
  * @returns - return an integer of ifindex if no error
  */
-int lkl_ifname_to_ifindex(const char *name);
+    int lkl_ifname_to_ifindex(const char *name);
 
 /**
  * lkl_netdev - host network device handle, defined in lkl_host.h.
  */
-struct lkl_netdev;
+    struct lkl_netdev;
 
 /**
 * lkl_netdev_args - arguments to lkl_netdev_add
 * @mac - optional MAC address for the device
 * @offload - offload bits for the device
 */
-struct lkl_netdev_args {
+    struct lkl_netdev_args {
 	void *mac;
 	unsigned int offload;
-};
+    };
 
 /**
  * lkl_netdev_add - add a new network device
@@ -675,13 +670,13 @@ struct lkl_netdev_args {
  * case of error
  */
 #ifdef LKL_HOST_CONFIG_VIRTIO_NET
-int lkl_netdev_add(struct lkl_netdev *nd, struct lkl_netdev_args* args);
+    int lkl_netdev_add(struct lkl_netdev *nd,
+		       struct lkl_netdev_args *args);
 #else
-static inline int lkl_netdev_add(struct lkl_netdev *nd,
-				 struct lkl_netdev_args *args)
-{
+    static inline int lkl_netdev_add(struct lkl_netdev *nd,
+				     struct lkl_netdev_args *args) {
 	return -LKL_ENOSYS;
-}
+    }
 #endif
 
 /**
@@ -693,11 +688,10 @@ static inline int lkl_netdev_add(struct lkl_netdev *nd,
 * @id - the network device id, as return by @lkl_netdev_add
 */
 #ifdef LKL_HOST_CONFIG_VIRTIO_NET
-void lkl_netdev_remove(int id);
+    void lkl_netdev_remove(int id);
 #else
-static inline void lkl_netdev_remove(int id)
-{
-}
+    static inline void lkl_netdev_remove(int id) {
+    }
 #endif
 
 /**
@@ -706,11 +700,10 @@ static inline void lkl_netdev_remove(int id)
  * @nd - the network device to free
  */
 #ifdef LKL_HOST_CONFIG_VIRTIO_NET
-void lkl_netdev_free(struct lkl_netdev *nd);
+    void lkl_netdev_free(struct lkl_netdev *nd);
 #else
-static inline void lkl_netdev_free(struct lkl_netdev *nd)
-{
-}
+    static inline void lkl_netdev_free(struct lkl_netdev *nd) {
+    }
 #endif
 
 /**
@@ -720,7 +713,7 @@ static inline void lkl_netdev_free(struct lkl_netdev *nd)
  * @id - the network device id
  * @returns the interface index or a stricly negative value in case of error
  */
-int lkl_netdev_get_ifindex(int id);
+    int lkl_netdev_get_ifindex(int id);
 
 /**
  * lkl_netdev_tap_create - create TAP net_device for the virtio net backend
@@ -730,13 +723,14 @@ int lkl_netdev_get_ifindex(int id);
  * @offload - offload bits for the device
  */
 #ifdef LKL_HOST_CONFIG_VIRTIO_NET
-struct lkl_netdev *lkl_netdev_tap_create(const char *ifname, int offload);
+    struct lkl_netdev *lkl_netdev_tap_create(const char *ifname,
+					     int offload);
 #else
-static inline struct lkl_netdev *
-lkl_netdev_tap_create(const char *ifname, int offload)
-{
+    static inline struct lkl_netdev *lkl_netdev_tap_create(const char
+							   *ifname,
+							   int offload) {
 	return NULL;
-}
+    }
 #endif
 
 /**
@@ -748,14 +742,17 @@ lkl_netdev_tap_create(const char *ifname, int offload)
  * @mac - mac address pointer of dpdk-ed device
  */
 #ifdef LKL_HOST_CONFIG_VIRTIO_NET_DPDK
-struct lkl_netdev *lkl_netdev_dpdk_create(const char *ifname, int offload,
-					unsigned char *mac);
+    struct lkl_netdev *lkl_netdev_dpdk_create(const char *ifname,
+					      int offload,
+					      unsigned char *mac);
 #else
-static inline struct lkl_netdev *
-lkl_netdev_dpdk_create(const char *ifname, int offload, unsigned char *mac)
-{
+    static inline struct lkl_netdev *lkl_netdev_dpdk_create(const char
+							    *ifname,
+							    int offload,
+							    unsigned char
+							    *mac) {
 	return NULL;
-}
+    }
 #endif
 
 /**
@@ -765,12 +762,12 @@ lkl_netdev_dpdk_create(const char *ifname, int offload, unsigned char *mac)
  * in advance.
  */
 #ifdef LKL_HOST_CONFIG_VIRTIO_NET_VDE
-struct lkl_netdev *lkl_netdev_vde_create(const char *switch_path);
+    struct lkl_netdev *lkl_netdev_vde_create(const char *switch_path);
 #else
-static inline struct lkl_netdev *lkl_netdev_vde_create(const char *switch_path)
-{
+    static inline struct lkl_netdev *lkl_netdev_vde_create(const char
+							   *switch_path) {
 	return NULL;
-}
+    }
 #endif
 
 /**
@@ -780,12 +777,12 @@ static inline struct lkl_netdev *lkl_netdev_vde_create(const char *switch_path)
  * @ifname - interface name for the snoop device.
  */
 #ifdef LKL_HOST_CONFIG_VIRTIO_NET
-struct lkl_netdev *lkl_netdev_raw_create(const char *ifname);
+    struct lkl_netdev *lkl_netdev_raw_create(const char *ifname);
 #else
-static inline struct lkl_netdev *lkl_netdev_raw_create(const char *ifname)
-{
+    static inline struct lkl_netdev *lkl_netdev_raw_create(const char
+							   *ifname) {
 	return NULL;
-}
+    }
 #endif
 
 /**
@@ -797,13 +794,15 @@ static inline struct lkl_netdev *lkl_netdev_raw_create(const char *ifname)
  * @offload - offload bits for the device
  */
 #ifdef LKL_HOST_CONFIG_VIRTIO_NET_MACVTAP
-struct lkl_netdev *lkl_netdev_macvtap_create(const char *path, int offload);
+    struct lkl_netdev *lkl_netdev_macvtap_create(const char *path,
+						 int offload);
 #else
-static inline struct lkl_netdev *
-lkl_netdev_macvtap_create(const char *path, int offload)
-{
+    static inline struct lkl_netdev *lkl_netdev_macvtap_create(const char
+							       *path,
+							       int offload)
+    {
 	return NULL;
-}
+    }
 #endif
 
 /**
@@ -815,13 +814,14 @@ lkl_netdev_macvtap_create(const char *path, int offload)
  * @offload - offload bits for the device
  */
 #ifdef LKL_HOST_CONFIG_VIRTIO_NET
-struct lkl_netdev *lkl_netdev_pipe_create(const char *ifname, int offload);
+    struct lkl_netdev *lkl_netdev_pipe_create(const char *ifname,
+					      int offload);
 #else
-static inline struct lkl_netdev *
-lkl_netdev_pipe_create(const char *ifname, int offload)
-{
+    static inline struct lkl_netdev *lkl_netdev_pipe_create(const char
+							    *ifname,
+							    int offload) {
 	return NULL;
-}
+    }
 #endif
 
 /*
@@ -833,7 +833,7 @@ lkl_netdev_pipe_create(const char *ifname, int offload)
  * If you run the program from shell script, make sure you ignore SIGTSTP by
  * "trap '' TSTP" in the shell script.
  */
-void lkl_register_dbg_handler(void);
+    void lkl_register_dbg_handler(void);
 
 /**
  * lkl_add_neighbor - add a permanent arp entry
@@ -842,14 +842,14 @@ void lkl_register_dbg_handler(void);
  * @ip - ip address of the entry in network byte order
  * @mac - mac address of the entry
  */
-int lkl_add_neighbor(int ifindex, int af, void* addr, void* mac);
+    int lkl_add_neighbor(int ifindex, int af, void *addr, void *mac);
 
 /**
  * lkl_mount_fs - mount a file system type like proc, sys
  * @fstype - file system type. e.g. proc, sys
  * @returns - 0 on success. 1 if it's already mounted. negative on failure.
  */
-int lkl_mount_fs(char *fstype);
+    int lkl_mount_fs(char *fstype);
 
 /**
  * lkl_if_add_ip - add an ip address
@@ -858,7 +858,8 @@ int lkl_mount_fs(char *fstype);
  * @addr - ip address of the entry in network byte order
  * @netprefix_len - prefix length of the @addr
  */
-int lkl_if_add_ip(int ifindex, int af, void *addr, unsigned int netprefix_len);
+    int lkl_if_add_ip(int ifindex, int af, void *addr,
+		      unsigned int netprefix_len);
 
 /**
  * lkl_if_del_ip - add an ip address
@@ -867,14 +868,15 @@ int lkl_if_add_ip(int ifindex, int af, void *addr, unsigned int netprefix_len);
  * @addr - ip address of the entry in network byte order
  * @netprefix_len - prefix length of the @addr
  */
-int lkl_if_del_ip(int ifindex, int af, void *addr, unsigned int netprefix_len);
+    int lkl_if_del_ip(int ifindex, int af, void *addr,
+		      unsigned int netprefix_len);
 
 /**
  * lkl_add_gateway - add a gateway
  * @af - address family of the ip address. Must be LKL_AF_INET or LKL_AF_INET6
  * @gwaddr - 4-byte IP address of the gateway (i.e., struct in_addr)
  */
-int lkl_add_gateway(int af, void *gwaddr);
+    int lkl_add_gateway(int af, void *gwaddr);
 
 /**
  * XXX Should I use OIF selector?
@@ -887,7 +889,7 @@ int lkl_add_gateway(int af, void *gwaddr);
  * @af - address family of the ip address. Must be LKL_AF_INET or LKL_AF_INET6
  * @saddr - network byte order ip address, "from" selector address of this rule
  */
-int lkl_if_add_rule_from_saddr(int ifindex, int af, void *saddr);
+    int lkl_if_add_rule_from_saddr(int ifindex, int af, void *saddr);
 
 /**
  * lkl_if_add_gateway - add gateway to rule table
@@ -895,7 +897,7 @@ int lkl_if_add_rule_from_saddr(int ifindex, int af, void *saddr);
  * @af - address family of the ip address. Must be LKL_AF_INET or LKL_AF_INET6
  * @gwaddr - 4-byte IP address of the gateway (i.e., struct in_addr)
  */
-int lkl_if_add_gateway(int ifindex, int af, void *gwaddr);
+    int lkl_if_add_gateway(int ifindex, int af, void *gwaddr);
 
 /**
  * lkl_if_add_linklocal - add linklocal route to rule table
@@ -904,7 +906,8 @@ int lkl_if_add_gateway(int ifindex, int af, void *gwaddr);
  * @addr - ip address of the entry in network byte order
  * @netprefix_len - prefix length of the @addr
  */
-int lkl_if_add_linklocal(int ifindex, int af,  void *addr, int netprefix_len);
+    int lkl_if_add_linklocal(int ifindex, int af, void *addr,
+			     int netprefix_len);
 
 /**
  * lkl_if_wait_ipv6_dad - wait for DAD to be done for a ipv6 address
@@ -913,13 +916,13 @@ int lkl_if_add_linklocal(int ifindex, int af,  void *addr, int netprefix_len);
  * @ifindex - the ifindex of the interface
  * @addr - ip address of the entry in network byte order
  */
-int lkl_if_wait_ipv6_dad(int ifindex, void *addr);
+    int lkl_if_wait_ipv6_dad(int ifindex, void *addr);
 
 /**
  * lkl_set_fd_limit - set the maximum number of file descriptors allowed
  * @fd_limit - fd max limit
  */
-int lkl_set_fd_limit(unsigned int fd_limit);
+    int lkl_set_fd_limit(unsigned int fd_limit);
 
 /**
  * lkl_qdisc_add - set qdisc rule onto an interface
@@ -928,7 +931,7 @@ int lkl_set_fd_limit(unsigned int fd_limit);
  * @root - the name of root class (e.g., "root");
  * @type - the type of qdisc (e.g., "fq")
  */
-int lkl_qdisc_add(int ifindex, const char *root, const char *type);
+    int lkl_qdisc_add(int ifindex, const char *root, const char *type);
 
 /**
  * lkl_qdisc_parse_add - Add a qdisc entry for an interface with strings
@@ -937,7 +940,7 @@ int lkl_qdisc_add(int ifindex, const char *root, const char *type);
  * @entries - strings of qdisc configurations in the form of
  *            "root|type;root|type;..."
  */
-void lkl_qdisc_parse_add(int ifindex, const char *entries);
+    void lkl_qdisc_parse_add(int ifindex, const char *entries);
 
 /**
  * lkl_sysctl - write a sysctl value
@@ -945,21 +948,21 @@ void lkl_qdisc_parse_add(int ifindex, const char *entries);
  * @path - the path to an sysctl entry (e.g., "net.ipv4.tcp_wmem");
  * @value - the value of the sysctl (e.g., "4096 87380 2147483647")
  */
-int lkl_sysctl(const char *path, const char *value);
+    int lkl_sysctl(const char *path, const char *value);
 
 /**
  * lkl_sysctl - read a sysctl value
  *
  * @path - the path to an sysctl entry (e.g., "net.ipv4.tcp_wmem");
  */
-int lkl_sysctl_get(const char *path, char *buffer, int size);
+    int lkl_sysctl_get(const char *path, char *buffer, int size);
 
 /**
  * lkl_sysctl_parse_write - Configure sysctl parameters with strings
  *
  * @sysctls - Configure sysctl parameters as the form of "key=value;..."
  */
-void lkl_sysctl_parse_write(const char *sysctls);
+    void lkl_sysctl_parse_write(const char *sysctls);
 
 #ifdef __cplusplus
 }

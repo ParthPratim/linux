@@ -386,6 +386,8 @@ EXPORT_SYMBOL_GPL(inet_csk_get_port);
  * Wait for an incoming connection, avoid race conditions. This must be called
  * with the socket locked.
  */
+void lib_task_wait(__u64 ns);
+void lib_task_schedule(void);
 static int inet_csk_wait_for_connect(struct sock *sk, long timeo)
 {
 	struct inet_connection_sock *icsk = inet_csk(sk);
@@ -410,8 +412,10 @@ static int inet_csk_wait_for_connect(struct sock *sk, long timeo)
 		prepare_to_wait_exclusive(sk_sleep(sk), &wait,
 					  TASK_INTERRUPTIBLE);
 		release_sock(sk);
-		if (reqsk_queue_empty(&icsk->icsk_accept_queue))
-			timeo = schedule_timeout(timeo);
+		if (reqsk_queue_empty(&icsk->icsk_accept_queue)){			
+			lib_task_schedule();
+			timeo = 0;			
+		}			
 		sched_annotate_sleep();
 		lock_sock(sk);
 		err = 0;

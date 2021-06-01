@@ -31,7 +31,7 @@ int dce_sock_listen (struct DceSocket *socket, int backlog);
 
 int dce_sock_shutdown (struct DceSocket *socket, int how);
 
-int dce_sock_accept (struct DceSocket *socket, struct DceSocket **newSocket, int flags);
+int dce_sock_accept (struct DceSocket *socket, struct DceSocket **newSocket, struct sockaddr *my_addr, struct socklen_t *addrlen, int flags);
 
 int dce_sock_ioctl (struct DceSocket *socket, int request, char *argp);
 

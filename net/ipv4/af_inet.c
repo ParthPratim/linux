@@ -585,8 +585,8 @@ static long inet_wait_for_connect(struct sock *sk, long timeo, int writebias)
 	 * without closing the socket.
 	 */
 	while ((1 << sk->sk_state) & (TCPF_SYN_SENT | TCPF_SYN_RECV)) {
-		release_sock(sk);
-		timeo = wait_woken(&wait, TASK_INTERRUPTIBLE, timeo);
+		release_sock(sk);	
+		timeo = wait_woken(&wait, TASK_INTERRUPTIBLE, timeo);		
 		lock_sock(sk);
 		if (signal_pending(current) || !timeo)
 			break;

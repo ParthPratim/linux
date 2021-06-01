@@ -138,6 +138,7 @@ struct KernelHandle {
    * flags - file status flag
    */
   int (*sock_accept)(struct DceSocket *socket, struct DceSocket **newSocket,
+        struct sockaddr *my_addr, socklen_t *addrlen,
         int flags);
 
   /**
@@ -586,7 +587,9 @@ struct DceHandle {
    *
    * @kernel -
    */
-  void (*task_wait)(struct DceKernel *kernel);
+  void (*task_wait)(struct DceKernel *kernel, __u64 ns);
+
+  void (*task_schedule)(void);
 
   /**
    * @task_current -

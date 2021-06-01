@@ -4,6 +4,8 @@
 .SUFFIXES:
 MAKEFLAGS += -r --no-print-directory
 
+KCONFIG?=defconfig
+
 ifneq ($(silent),1)
   ifneq ($(V),1)
 	QUIET_AUTOCONF       = @echo '  AUTOCONF '$@;
@@ -39,7 +41,7 @@ $(OUTPUT)Makefile.conf: Makefile.autoconf
 
 -include $(OUTPUT)Makefile.conf
 
-export CFLAGS += -g -I$(OUTPUT)/include -Iinclude -Wall -g -O2 -Wextra \
+export CFLAGS += -I$(OUTPUT)/include -Iinclude -Wall -g -O2 -Wextra \
 	 -Wno-unused-parameter \
 	 -Wno-missing-field-initializers -fno-strict-aliasing
 
@@ -53,13 +55,17 @@ all: $(TARGETS)
 bin/stat:
 ifeq ($(LKL_HOST_CONFIG_BSD),y)
 	$(Q)ln -sf `which gnustat` bin/stat
+	$(Q)ln -sf `which gsed` bin/sed
 else
 	$(Q)touch bin/stat
 endif
 
+extract_lkl_protoypes:
+	$(CONFIG_SHELL) scripts/extract_lkl.sh
+
 # rule to build lkl.o
-$(OUTPUT)lib/lkl.o: bin/stat
-	$(Q)$(MAKE) -C ../.. ARCH=lkl $(KOPT) defconfig
+$(OUTPUT)lib/lkl.o: extract_lkl_protoypes bin/stat
+	$(Q)$(MAKE) -C ../.. ARCH=lkl $(KOPT) $(KCONFIG)
 # this workaround is for arm32 linker (ld.gold)
 	$(Q)export PATH=$(srctree)/tools/lkl/bin/:${PATH} ;\
 	$(MAKE) -C ../.. ARCH=lkl $(KOPT) install INSTALL_PATH=$(OUTPUT)
@@ -86,9 +92,6 @@ $(OUTPUT)%-in.o: $(OUTPUT)lib/lkl.o FORCE
 $(OUTPUT)cpfromfs$(EXESUF): cptofs$(EXESUF)
 	$(Q)if ! [ -e $@ ]; then ln -s $< $@; fi
 
-
-#--------------extra targets, Not needed to build LKL-----------------------
-
 clean:
 	$(call QUIET_CLEAN, objects)find $(OUTPUT) -name '*.o' -delete -o -name '\.*.cmd'\
 	 -delete -o -name '\.*.d' -delete
@@ -103,7 +106,7 @@ headers_install: $(TARGETS)
 	$(call QUIET_INSTALL, headers) \
 	    install -d $(DESTDIR)$(PREFIX)/include ; \
 	    install -m 644 include/lkl.h include/lkl_host.h $(OUTPUT)include/lkl_autoconf.h \
-	      $(DESTDIR)$(PREFIX)/include ; \
+	      include/lkl_config.h $(DESTDIR)$(PREFIX)/include ; \
 	    cp -r $(OUTPUT)include/lkl $(DESTDIR)$(PREFIX)/include
 
 libraries_install: $(libs-y:%=$(OUTPUT)%$(SOSUF))

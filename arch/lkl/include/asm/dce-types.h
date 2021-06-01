@@ -5,6 +5,14 @@
 extern "C" {
 #endif
 
+#include <linux/sched.h>
+
+struct SimTask {
+	struct list_head head;
+	struct task_struct kernel_task;
+	void *private;
+};
+
 struct SimDevice;
 
 struct SimSysFile;
